@@ -1,0 +1,3 @@
+model_name: distilbert-base-uncased
+dataset_name: glue/sst2
+learning_rate: 2.0e-5

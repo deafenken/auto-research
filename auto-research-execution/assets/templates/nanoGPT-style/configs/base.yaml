@@ -1,0 +1,3 @@
+model_name: tiny-gpt
+learning_rate: 0.0003
+max_steps: 1000

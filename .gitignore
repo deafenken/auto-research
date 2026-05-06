@@ -1,0 +1,13 @@
+.DS_Store
+._*
+.claude/
+__pycache__/
+**/__pycache__/
+*.pyc
+runs/
+*.log
+*.pdf
+*.aux
+*.out
+*.toc
+*.synctex.gz

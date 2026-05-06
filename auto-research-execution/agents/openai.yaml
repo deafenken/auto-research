@@ -1,0 +1,3 @@
+interface:
+  display_name: "Research Execution"
+  short_description: "Implement and run planned research experiments"
