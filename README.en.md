@@ -1,6 +1,6 @@
 # Auto Research Skills
 
-`auto-research` is a staged CS/AI research skill suite for Claude and Codex agents. It takes a project from broad topic selection to a draft paper, with explicit contracts between stages and hard integrity checks against fabricated citations, unsupported claims, and silent baseline downgrades.
+`auto-research` is a staged CS/AI research skill suite for Claude and Codex agents. It starts by asking which venue you want to target, fetches the official LaTeX template and submission requirements from official sources, analyzes the CFP to shape the innovation angle, then takes the project from broad topic selection to a draft paper with explicit contracts between stages and hard integrity checks against fabricated citations, unsupported claims, and silent baseline downgrades.
 
 ## Included Skills
 
@@ -14,10 +14,12 @@
 
 - `Evidence first`: claims and tables must trace to run artifacts or verified citations.
 - `Stage contracts`: each stage reads and writes files under `runs/<run_id>/`.
+- `Venue-first setup`: the workflow asks for the target conference or journal before ideation, then grounds innovation choices in the CFP and official template.
 - `Output-first writing`: writing starts from results, limitations, and reviewability, not style.
 - `Reviewer realism`: the pipeline optimizes for what a top-tier reviewer can attack.
 - `Budget honesty`: compute, baselines, and failure criteria are fixed before execution.
 - `Human accountability`: generated papers are drafts and require human review before submission.
+- `No evaluation-paper drift`: unless explicitly requested, the pipeline avoids collapsing into a pure benchmark or model-comparison paper.
 
 ## Repository Layout
 
@@ -57,3 +59,4 @@ Each skill contains:
 - The writing stage supports negative-result framing instead of paper-washing failed hypotheses.
 - `auto-research-writing` defaults to a generic NeurIPS-style LaTeX template, with ICLR and ICML variants included.
 - The suite is research-assistance infrastructure, not an auto-submit system.
+- By default, the suite aims for real research ideas rather than "evaluate many models on many benchmarks" papers.

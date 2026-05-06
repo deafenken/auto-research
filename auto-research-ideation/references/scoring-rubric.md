@@ -1,6 +1,6 @@
-# Scoring Rubric — Novelty & Feasibility
+# Scoring Rubric — Novelty, Feasibility, and Contribution Shape
 
-Each candidate idea gets two scores. Both must be defensible — write the score *and* the 2–3 sentence justification into `candidates.json`.
+Each candidate idea gets three scores. All must be defensible — write the score *and* the 2–3 sentence justification into `candidates.json`.
 
 ## Novelty score (0–1)
 
@@ -34,6 +34,7 @@ These force the score down regardless of how good the idea sounds:
 - The candidate's "innovation" requires a new dataset/benchmark to evaluate → cap at 0.7 unless the new benchmark is itself a contribution (then it should be presented as such).
 - The candidate is "method X applied to domain Y" without a domain-specific reason → cap at 0.4.
 - A near-identical paper exists in `literature_pool.json` (caught by re-search after Round 3) → score 0, kill the candidate.
+- The candidate is mainly a benchmark sweep, leaderboard comparison, prompt bake-off, or evaluation matrix without a new method, formulation, theory, dataset/task, or falsifiable scientific claim → cap at 0.2 and usually kill.
 
 ## Feasibility score (0–1)
 
@@ -67,16 +68,36 @@ Compare against `run.yaml::budget.gpu_hours`. Also check `budget.hardware` match
 - "We'll just use the public eval results" — only valid if the eval is on a standard benchmark with locked test sets. Otherwise the comparison isn't apples-to-apples.
 - "We can do 1 seed" — never. 1-seed results are not publishable. Revise scope or kill.
 
+## Contribution-shape score (0–1)
+
+The question: is this a real research contribution, or are we sliding into an evaluation paper by accident?
+
+| Score | Label | What it looks like |
+|---|---|---|
+| 0.9–1.0 | Clear research contribution | New mechanism, new formulation, new theory, or a new dataset/task with a sharp scientific claim. |
+| 0.7–0.89 | Strong contribution shape | Empirical work, but organized around a real hypothesis or intervention that teaches something new. |
+| 0.5–0.69 | Borderline | Has a claim, but risks being read as "mostly evaluation" unless Stage 2 sharpens it. |
+| 0.3–0.49 | Weak | Mostly comparisons, sweeps, or repackaging known components. |
+| 0.0–0.29 | Evaluation trap | Benchmark paper, model ranking, or prompt recipe paper with no genuine research claim. Kill by default. |
+
+### Anti-trap checks
+
+- If the title could be rewritten as `An Evaluation of ...` with no loss of substance, cap at 0.3.
+- If removing the benchmark table would leave no contribution, cap at 0.2.
+- If the work has no intervention beyond "compare methods across settings", cap at 0.2.
+- If the claimed novelty is only "we evaluate on more datasets", cap at 0.2 unless the dataset suite itself is the contribution and the user explicitly wants that paper type.
+
 ## Combined score for autonomous mode
 
 When `--autonomous` is set, the orchestrator picks the candidate with:
 
 ```
-combined_score = 0.6 * novelty + 0.4 * feasibility
+combined_score = 0.45 * novelty + 0.30 * feasibility + 0.25 * contribution_shape
 ```
 
-We weight novelty higher because:
+We weight novelty highest because:
 - A high-feasibility but low-novelty paper goes to a workshop at best.
+- A benchmark-heavy paper can look deceptively feasible, so contribution shape gets explicit weight.
 - A high-novelty but borderline-feasibility paper, *if* it works, is high-impact. The risk is real but worth it within the established budget gate (Rule 5).
 
 Tie-break by: lower expected GPU-hours wins (cheaper to retry).
@@ -91,7 +112,9 @@ Tie-break by: lower expected GPU-hours wins (cheaper to retry).
   "novelty_justification": "Closest works (canonical_ids: arxiv:2403.xxxx, arxiv:2405.yyyy) propose verifier-based decoding but with fixed verifier-step ratio. This proposes adapting the ratio per-token based on a learned uncertainty signal — addresses the 'verifier-step calibration' gap raised by both the Theorist and the Engineer in cluster C4.",
   "feasibility_score": 0.62,
   "feasibility_justification": "Estimated 28 GPU-hours of 40 budgeted (5 seeds × main + 2 ablations × 3 seeds × 1.3 buffer). Tight, but well within 1×H100. Risk: needs to fine-tune both a small LM (cheap) and a verifier (medium). If verifier training requires more than 4 hr per seed, drops to 0.45.",
-  "combined_score": 0.694
+  "contribution_shape_score": 0.86,
+  "contribution_shape_justification": "The core contribution is a new adaptive decoding mechanism with a falsifiable efficiency-vs-accuracy claim, not a broad model ranking exercise.",
+  "combined_score": 0.730
 }
 ```
 

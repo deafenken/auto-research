@@ -41,12 +41,13 @@ The `method.md` and `experiment_plan.yaml` are the contracts Stage 3 reads. Anyt
 
 ### Phase 1 — Read the idea, load the constraints
 
-Read `runs/<run_id>/stage1_ideation/chosen.json` and `hand_off.md`. Extract:
+Read `runs/<run_id>/stage1_ideation/chosen.json`, `hand_off.md`, and `runs/<run_id>/stage0_setup/{venue_profile.yaml,submission_requirements.md}`. Extract:
 
 - The exact pain point being addressed.
 - The expected baseline.
 - The success prediction (this becomes the falsifiable hypothesis).
 - The "do not silently revise" list — your method must respect these.
+- The target venue's preferred evidence style and packaging constraints.
 
 Read `run.yaml` for budget. Method choices that require pretraining-from-scratch on a 10B model with a 40-GPU-hour budget are infeasible — flag now, not in Stage 3.
 
@@ -85,6 +86,7 @@ Required components:
 5. **Seeds.** ≥ 3 for credible results, 5 for top venues. Variance reporting is mandatory.
 6. **Compute estimate.** Per-run × seeds × configs × buffer (1.3×). Must fit `run.yaml::budget`.
 7. **Success / failure criteria.** Pre-registered: at what number do we declare success? At what number do we kill?
+8. **Venue-fit checks.** Make sure the experiment breadth and ablations would look sufficient to the target venue's likely reviewers.
 
 The plan goes into `experiment_plan.yaml` per the schema in `auto-research/references/state-contract.md`.
 
@@ -120,6 +122,7 @@ seeds: [13, 42, 123, 1234, 7777]
 3. **Math must connect to claim.** Every claim in the method's "intuition" paragraph must have a corresponding piece of math or experimental check.
 4. **Compute must fit budget.** Total estimated GPU-hours × 1.3 (debugging buffer) ≤ `run.yaml::budget.gpu_hours`. If not: scope down scaling, ablations, or seeds before sending to Stage 3. Don't punt overage to Stage 3.
 5. **Ablations must be principled.** Each ablation tests *one* component. "We removed everything that wasn't critical" is not an ablation.
+6. **Design for the venue you named.** If the user targets a venue that expects stronger theory, stronger breadth, or stronger systems analysis, the plan must reflect that explicitly.
 
 ## When to load which reference
 

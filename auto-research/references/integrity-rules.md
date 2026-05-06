@@ -116,6 +116,20 @@ Any other class — silent NaN loss, model architecture mismatch, unexpected met
 
 **Failure mode this prevents.** The agent "fixing" by deleting the failing test, weakening assertions, or commenting out the broken module.
 
+## Rule 8 — No accidental evaluation-paper drift
+
+**Statement.** Unless the user explicitly requested an evaluation / benchmark paper, Stage 1 and Stage 2 must preserve a genuine research contribution: a new mechanism, formulation, theory, dataset/task, or falsifiable scientific hypothesis.
+
+**What is forbidden.**
+
+- Letting the idea drift into "we evaluated many models on many benchmarks."
+- Reframing a weak method paper as a broad comparison paper just because execution is easier.
+- Treating benchmark breadth alone as novelty.
+
+**Check.** At Stage 1→2 and 2→3 transitions, inspect `candidates.json`, `chosen.json`, `method.md`, and `stress_test.md`. If the contribution cannot survive removal of the benchmark table, BLOCK and re-scope.
+
+**Failure mode this prevents.** The common autonomous-agent trap where "real innovation is hard, so the system quietly degenerates into a benchmark or evaluation paper."
+
 ## Enforcement summary table
 
 | Rule | Stage where checked | Mode |
@@ -127,6 +141,7 @@ Any other class — silent NaN loss, model architecture mismatch, unexpected met
 | 5. Compute budget | continuous in 3 | Warn @ 50%, ask @ 80%, hard stop @ 100% |
 | 6. Hypothesis locked | 3, 4 | Block |
 | 7. Auto-fix boundary | 3 | Escalate after 5 |
+| 8. No evaluation-paper drift | 1→2, 2→3 | Block |
 
 ## When a rule is violated
 

@@ -94,6 +94,26 @@ Response: ...
 
 If you can't write a credible response, the paper has a real weakness. Address it (with more compute, more ablations, sharper framing) before Stage 3.
 
+### Q9. "Is this secretly just an evaluation paper?"
+
+Ask this brutally:
+
+- If I removed the benchmark tables, would a research contribution still remain?
+- Is there a real intervention, mechanism, formulation, theorem, or new scientific hypothesis here?
+- Or is the paper mainly "we evaluated more things more carefully"?
+
+If the honest answer is "mostly evaluation":
+
+- either sharpen the paper around a real hypothesis and intervention,
+- or kill / re-scope before Stage 3,
+- unless the user explicitly requested an evaluation / benchmark paper.
+
+Reviewer-2 version:
+
+```
+> "The submission appears to be primarily an empirical comparison study rather than a research contribution. It is unclear what new idea, mechanism, or scientific insight is being proposed beyond a broad evaluation matrix."
+```
+
 ## Output
 
 Write the stress-test results to `runs/<id>/stage2_method/stress_test.md`. Some answers belong in the public paper (Limitations section); others are internal.

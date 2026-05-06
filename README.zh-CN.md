@@ -1,6 +1,6 @@
 # Auto Research Skills
 
-`auto-research` 是一套同时面向 Claude 和 Codex agent 的分阶段 CS/AI 科研 skill 集合。它覆盖从研究主题收敛到论文草稿产出的完整链路，并通过明确的阶段契约与完整性约束，防止伪造引用、无证据结论和偷偷降级 baseline 这类问题。
+`auto-research` 是一套同时面向 Claude 和 Codex agent 的分阶段 CS/AI 科研 skill 集合。它会先询问你想投哪个会议或期刊，再从官方来源抓取对应的 LaTeX 模板和投稿要求，结合 CFP 分析创新角度，然后再推进从研究主题收敛到论文草稿产出的完整链路，并通过明确的阶段契约与完整性约束，防止伪造引用、无证据结论和偷偷降级 baseline 这类问题。
 
 ## 包含的 Skill
 
@@ -14,10 +14,12 @@
 
 - `Evidence first`：所有 claim 和表格都必须能追溯到实验产物或已验证引用。
 - `Stage contracts`：每个阶段都通过 `runs/<run_id>/` 下的文件进行读写交接。
+- `Venue-first setup`：在 ideation 之前先确定目标会议或期刊，再用 CFP 和官方模板约束创新点与论文包装。
 - `Output-first writing`：写作从结果、限制和可审查性出发，而不是先堆措辞。
 - `Reviewer realism`：整套流程按顶会 reviewer 会怎么挑问题来设计。
 - `Budget honesty`：算力预算、baseline 和失败标准都必须在执行前锁定。
 - `Human accountability`：生成的论文只是草稿，提交前必须由人审阅和负责。
+- `No evaluation-paper drift`：除非用户明确要求，否则流程不会默认退化成纯 benchmark / 纯评测论文。
 
 ## 仓库结构
 
@@ -57,3 +59,4 @@ README.zh-CN.md
 - 写作阶段支持把失败结果诚实地组织成 negative-result framing，而不是“洗论文”。
 - `auto-research-writing` 默认提供通用 NeurIPS 风格 LaTeX 模板，同时附带 ICLR 和 ICML 版本。
 - 这套东西是科研辅助基础设施，不是自动投稿系统。
+- 默认目标是真正的研究创新 idea，而不是“测很多模型、跑很多榜单”的评测论文。

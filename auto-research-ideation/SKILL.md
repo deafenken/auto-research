@@ -1,6 +1,6 @@
 ---
 name: auto-research-ideation
-description: Generate top-tier-conference-grade research ideas in CS/AI (LLMs, CV, RL, multimodal, systems-for-ML) by mining real research gaps from OpenReview reviewer comments and recent arXiv/Semantic-Scholar papers, then running a STORM-style multi-perspective debate to surface non-obvious angles. Outputs 3 candidate ideas, each with verified citations, a feasibility-under-budget score, and a novelty score against the SOTA. Use when the user provides a domain and wants research directions; do NOT use for literature-only summaries (route to a search skill instead) or for picking from already-narrowed ideas (route to auto-research-method).
+description: Generate venue-targeted research ideas in CS/AI (LLMs, CV, RL, multimodal, systems-for-ML) by mining real research gaps from OpenReview reviewer comments and recent arXiv/Semantic-Scholar papers, then running a STORM-style multi-perspective debate to surface non-obvious angles. Reads the target venue's CFP and review emphasis first, then outputs 3 candidate ideas with verified citations, a feasibility-under-budget score, a novelty score against the SOTA, and a venue-fit score. Use when the user provides a domain and wants research directions; do NOT use for literature-only summaries (route to a search skill instead) or for picking from already-narrowed ideas (route to auto-research-method).
 ---
 
 # Skill 1 — Top-Tier Conference Idea Generator
@@ -33,13 +33,15 @@ hand_off.md            # 1-paragraph summary for Stage 2
 
 ## Workflow (5 phases)
 
-### Phase 1 — Domain framing (5 min equivalent)
+### Phase 1 — Domain + venue framing (5 min equivalent)
 
-Read `runs/<run_id>/run.yaml` to get the domain, compute budget, deadline, and constraints. From the domain string, extract:
+Read `runs/<run_id>/run.yaml` and `runs/<run_id>/stage0_setup/{venue_profile.yaml,cfp.md,submission_requirements.md}` to get the domain, venue, compute budget, deadline, and constraints. From these files, extract:
 
 - **Core area** (e.g. "test-time compute", "diffusion sampling", "RLHF")
 - **Sub-area** if specifiable (e.g. "small LMs <7B", "image generation with classifier-free guidance")
 - **Implicit constraints** the user did not say but you should infer (e.g. "compute budget = 40 H100-hours" implies *no pretraining-from-scratch*)
+- **Venue-preferred contribution shape** (e.g. stronger theory, stronger scaling evidence, benchmark breadth, systems relevance)
+- **Venue-red-flag patterns** from the CFP or review criteria
 
 Write a 3–5 line "domain frame" to `stage1_ideation/domain_frame.md`. This anchors the rest of the stage.
 
@@ -77,11 +79,14 @@ For each of the 3 candidates, compute two scores using the rubrics in `reference
 
 - **Novelty score (0–1).** Against the closest SOTA in the literature pool — is this an *incremental* delta (≤ 0.3) or *paradigm-shift-adjacent* (≥ 0.7)?
 - **Feasibility score (0–1).** Can this be validated within `run.yaml::budget.gpu_hours` on `run.yaml::budget.hardware`? If not, score < 0.5 and explain why.
+- **Venue-fit score (0–1).** Does this idea match the target venue's stated interests, evaluation norms, and likely reviewer expectations?
 
 Apply **the kill filters**:
 
 - Feasibility < 0.4 → kill the idea (compute black hole). Replace with another from the cluster.
 - Novelty < 0.3 → kill (incremental "water paper" — would be desk-rejected).
+- Venue-fit < 0.4 → kill unless the user explicitly asked for a contrarian venue bet.
+- "The contribution is mainly a benchmark/evaluation sweep with no new mechanism, formulation, or scientific hypothesis" → kill unless the user explicitly requested an evaluation paper.
 - "Requires data we don't have" → kill (no paper-by-fabrication).
 - "Has been done in arXiv:XXXX.XXXXX" — discovered via re-search after candidate generation → kill (priority art).
 
@@ -89,11 +94,12 @@ If kills leave you with < 3 candidates, loop Phase 3 with a *broader* persona se
 
 ### Phase 5 — Hand-off
 
-Write `candidates.json`, `chosen.json` (if `--autonomous`, pick by `0.6*novelty + 0.4*feasibility`), and the `hand_off.md`. The hand-off must include:
+Write `candidates.json`, `chosen.json` (if `--autonomous`, pick by `0.45*novelty + 0.30*feasibility + 0.25*venue_fit`), and the `hand_off.md`. The hand-off must include:
 
 - The chosen idea's exact pain point
 - The expected baseline to beat (with arxiv ID)
 - Two specific predictions Stage 2 must turn into testable hypotheses
+- Why this idea fits the target venue now
 - Any constraints from this stage that Stage 2 must respect (e.g. "must use this dataset because it's the only OOD-labeled one available")
 
 ## Output contract — what `candidates.json` looks like
@@ -107,6 +113,8 @@ See `auto-research/references/state-contract.md` for the schema. Each candidate 
 3. **No domain drift.** All 3 candidates must address the user's stated domain. "I noticed an interesting unrelated thing in optimizer design" is a Stage-99 conversation, not a Stage 1 deliverable.
 4. **Budget realism.** Feasibility score must be computed against the *actual* budget in `run.yaml`, not a generic "1×A100" assumption.
 5. **Novelty against the literature pool, not against your training data.** Your training cutoff lags reality; trust the freshly-fetched pool.
+6. **No venue-blind ideation.** A candidate that ignores the target venue's review emphasis is not ready to hand off.
+7. **Do not drift into "just an evaluation paper."** If the candidate's only contribution is broader testing, prompt engineering across benchmarks, or model comparison without a new research claim, kill it by default.
 
 ## When to load which reference
 
@@ -118,6 +126,8 @@ See `auto-research/references/state-contract.md` for the schema. Each candidate 
 | `references/personas.md` | Default personas don't fit domain (e.g. systems-for-ML needs different roles) |
 | `references/scoring-rubric.md` | Phase 4 (computing novelty + feasibility scores) |
 | `references/gap-patterns.md` | When personas are stuck and produce only generic complaints |
+| `references/cfp-innovation-lens.md` | Translating the venue CFP into idea filters and innovation bets |
+| `../auto-research/references/venue-targeting.md` | When Stage 0 inputs are incomplete or ambiguous |
 
 Default: load only `search-protocols.md` first; load others on demand.
 
@@ -128,3 +138,4 @@ Default: load only `search-protocols.md` first; load others on demand.
 - **The "this needs 1024 H100s" paper.** Filtered by feasibility score against `run.yaml::budget`.
 - **The "we re-discovered Smith 2022" paper.** Filtered by mandatory re-search after candidate generation.
 - **The "sounds cool but no real motivation" paper.** Filtered by requiring ≥ 2 grounding papers per candidate.
+- **The accidental benchmark paper.** Filtered by the evaluation-paper kill rule and the venue-fit check.

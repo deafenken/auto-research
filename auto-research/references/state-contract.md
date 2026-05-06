@@ -7,6 +7,7 @@ The four sub-skills communicate exclusively through files under `runs/<run_id>/`
 ```
 runs/<run_id>/
 ├── run.yaml
+├── stage0_setup/
 ├── stage1_ideation/
 ├── stage2_method/
 ├── stage3_execution/
@@ -22,6 +23,10 @@ Written by the orchestrator at Stage 0. Read by every subsequent stage.
 ```yaml
 run_id: 2026-05-06-ttc-small-lm
 domain: "test-time compute scaling for small LMs"
+target_venue:
+  name: "ICLR 2027"
+  track: "Main Conference"
+  source_url: "https://..."
 created_at: 2026-05-06T14:32:00Z
 budget:
   gpu_hours: 40
@@ -33,6 +38,38 @@ constraints:
   - "no closed-source models"
   - "results must be reproducible from a single seed"
 human_contact: kanella_hatleli588@mail.com
+```
+
+## Stage 0 — `stage0_setup/`
+
+```
+stage0_setup/
+├── venue_profile.yaml
+├── cfp.md
+├── submission_requirements.md
+├── latex_source.json
+├── latex_template/
+└── hand_off.md
+```
+
+### `venue_profile.yaml` schema
+
+```yaml
+venue:
+  name: "ICLR 2027"
+  track: "Main Conference"
+  official_url: "https://..."
+  template_url: "https://..."
+review_emphasis:
+  - "novel algorithmic contribution"
+  - "strong empirical validation"
+avoid_patterns:
+  - "incremental benchmark chasing without insight"
+  - "insufficient ablations"
+format_constraints:
+  page_limit: 9
+  anonymized: true
+  style: "iclr"
 ```
 
 ## Stage 1 — `stage1_ideation/`
@@ -60,6 +97,7 @@ stage1_ideation/
       "expected_baseline": "name + arxiv id of the SOTA we'll beat",
       "novelty_score": 0.0,        // 0–1 from rubric
       "feasibility_score": 0.0,    // 0–1 from rubric (compute-aware)
+      "venue_fit_score": 0.0,      // 0–1: aligned with CFP / review criteria
       "expected_compute_hours": 0,
       "risk_factors": ["bullet 1", "bullet 2"],
       "supporting_citations": ["semantic_scholar:1234", "arxiv:2401.00000"]
