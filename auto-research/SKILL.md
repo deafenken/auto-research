@@ -62,6 +62,7 @@ These are non-negotiable and the orchestrator must verify them at each transitio
 3. **No silent baseline downgrade.** If the planned baseline fails to run, the agent must escalate, not swap in a weaker baseline to make the method look good.
 4. **Reproducibility floor.** Every run logs: git commit, seed, full config YAML, GPU model, library versions. A run without these is `INVALID` and cannot proceed to writing.
 5. **Compute budget gate.** The orchestrator tracks cumulative GPU-hours against the budget declared in `run.yaml`. At 80%, pause and ask. At 100%, hard-stop.
+6. **Human accountability before submission.** The pipeline may draft a paper, but it never treats that draft as submission-ready without explicit human review. See `references/responsible-use.md`.
 
 ## Human-in-the-loop checkpoints
 
@@ -116,6 +117,7 @@ Default: load nothing extra. The four files below are loaded only when the orche
 | `references/state-contract.md` | Setting up `runs/<run_id>/` or recovering a partial run |
 | `references/integrity-rules.md` | At every stage transition (mandatory check) |
 | `references/escalation-policy.md` | Considering whether to pause and ask the human |
+| `references/responsible-use.md` | The user asks about submission, disclosure, or safety boundaries |
 | `references/inspiration-map.md` | The user asks why the design is shaped this way |
 
 ## Quick-start example
@@ -140,4 +142,5 @@ The orchestrator should:
 - Does not pick the *domain*. The user picks the domain; the agent picks the *gap* within it.
 - Does not write code itself — that is Stage 3's job.
 - Does not invent reviewers — Stage 4 has an auto-reviewer that uses the real ICLR/NeurIPS rubric.
+- Does not auto-submit papers or replace author responsibility.
 - Does not bypass any of the five hard constraints above, ever, including under user pressure to "just ship it".

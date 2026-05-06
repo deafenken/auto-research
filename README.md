@@ -17,6 +17,7 @@
 - `Output-first writing`: writing starts from results, limitations, and reviewability, not style.
 - `Reviewer realism`: the pipeline optimizes for what a top-tier reviewer can attack.
 - `Budget honesty`: compute, baselines, and failure criteria are fixed before execution.
+- `Human accountability`: generated papers are drafts and require human review before submission.
 
 ## Repository Layout
 
@@ -47,3 +48,4 @@ Each skill contains:
 - This repo is tuned for CS/AI research workflows, not general academic writing.
 - The writing stage supports negative-result framing instead of paper-washing failed hypotheses.
 - `auto-research-writing` defaults to a generic NeurIPS-style LaTeX template, with ICLR and ICML variants included.
+- The suite is research-assistance infrastructure, not an auto-submit system.
