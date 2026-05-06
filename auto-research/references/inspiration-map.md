@@ -62,7 +62,7 @@ Repo: https://github.com/aiming-lab/AutoResearchClaw
 
 ### What we changed
 
-- AutoResearchClaw has **23 stages across 8 phases**. We keep **4 stages** because each Claude Code skill is already an LLM-orchestrated unit with its own internal sub-steps; collapsing to 4 keeps the user's mental model simple. Their internal phase-decomposition lives inside our sub-skills as section ordering.
+- AutoResearchClaw has **23 stages across 8 phases**. We keep **4 stages** because each Claude/Codex skill is already an LLM-orchestrated unit with its own internal sub-steps; collapsing to 4 keeps the user's mental model simple. Their internal phase-decomposition lives inside our sub-skills as section ordering.
 - Their MetaClaw cross-run learning (lessons-from-prior-runs injected as auto-skills) is **deliberately not included** in v1. It's powerful but adds a moving-parts problem (skill injection at runtime). Add later if the user wants it.
 - They support 6 HITL levels (full-auto / gate-only / checkpoint / step-by-step / co-pilot / custom). We collapse to 2 (`autonomous` and default `interactive`) with mandatory hard-gates that override either. Easier to reason about.
 
@@ -75,7 +75,7 @@ Repo: https://github.com/aiming-lab/AutoResearchClaw
 
 ## Quick decision log: why 4 stages, not 23
 
-A 23-stage pipeline is correct for a turnkey product. For a Claude Code skill, fewer-larger stages let the LLM use its own reasoning between steps without having to context-switch through a brittle state machine. The risk of 4 stages is "LLM does too much in one stage and goes off the rails" — we mitigate via the explicit `state-contract.md` between stages and the integrity rules at every transition. The risk of 23 stages would be "user can never resume / debug / understand what stage X is doing" — worse for a skill that real humans must reason about.
+A 23-stage pipeline is correct for a turnkey product. For a Claude/Codex skill, fewer-larger stages let the LLM use its own reasoning between steps without having to context-switch through a brittle state machine. The risk of 4 stages is "LLM does too much in one stage and goes off the rails" — we mitigate via the explicit `state-contract.md` between stages and the integrity rules at every transition. The risk of 23 stages would be "user can never resume / debug / understand what stage X is doing" — worse for a skill that real humans must reason about.
 
 ## Where to read next
 
