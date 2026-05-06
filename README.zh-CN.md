@@ -20,6 +20,8 @@
 - `Budget honesty`：算力预算、baseline 和失败标准都必须在执行前锁定。
 - `Human accountability`：生成的论文只是草稿，提交前必须由人审阅和负责。
 - `No evaluation-paper drift`：除非用户明确要求，否则流程不会默认退化成纯 benchmark / 纯评测论文。
+- `External figure handoff`：当流程图或 idea 图更适合外部模型生成时，写作阶段会保留 LaTeX 占位符，并把可直接给 Gemini、GPT-image 等外部图像模型的提示词保存下来。
+- `Venue-aware writing budget`：写作阶段会严格服从目标会议页数限制，并在空间允许时默认给 `Related Work` 预留约 1 到 1.5 页、尽量做到引用丰富。
 
 ## 仓库结构
 
@@ -60,3 +62,4 @@ README.zh-CN.md
 - `auto-research-writing` 默认提供通用 NeurIPS 风格 LaTeX 模板，同时附带 ICLR 和 ICML 版本。
 - 这套东西是科研辅助基础设施，不是自动投稿系统。
 - 默认目标是真正的研究创新 idea，而不是“测很多模型、跑很多榜单”的评测论文。
+- 对于流程图、方法图、idea 图，写作阶段支持保留占位符并输出给 Gemini、GPT-image 之类外部作图模型使用的提示词文件。

@@ -200,10 +200,19 @@ stage4_writing/
 │   ├── teaser.pdf
 │   ├── pipeline.pdf
 │   └── results_main.pdf
+├── figure_prompts/
+│   └── pipeline_overview.md
+├── figure_plan.md
 ├── tables/
 │   └── main_results.tex
 └── review.md             # auto-reviewer output
 ```
+
+### `figure_plan.md` required sections
+
+- **Figure inventory**: each planned figure, target filename, section, and current status.
+- **External-generation prompts**: pointer to each `figure_prompts/*.md` file.
+- **Placeholder policy**: which figures are still placeholders in `paper.tex`.
 
 ### `review.md` required sections
 

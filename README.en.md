@@ -20,6 +20,8 @@
 - `Budget honesty`: compute, baselines, and failure criteria are fixed before execution.
 - `Human accountability`: generated papers are drafts and require human review before submission.
 - `No evaluation-paper drift`: unless explicitly requested, the pipeline avoids collapsing into a pure benchmark or model-comparison paper.
+- `External figure handoff`: when conceptual figures are better made outside the agent, the writing stage leaves LaTeX placeholders and saves prompts for external image models such as Gemini or GPT-image.
+- `Venue-aware writing budget`: the writing stage respects venue page limits and defaults to a citation-rich Related Work section, typically around 1 to 1.5 pages when space allows.
 
 ## Repository Layout
 
@@ -60,3 +62,4 @@ Each skill contains:
 - `auto-research-writing` defaults to a generic NeurIPS-style LaTeX template, with ICLR and ICML variants included.
 - The suite is research-assistance infrastructure, not an auto-submit system.
 - By default, the suite aims for real research ideas rather than "evaluate many models on many benchmarks" papers.
+- For pipeline or idea diagrams, the writing stage can leave figure placeholders plus saved prompts for external generation tools such as Gemini or GPT-image.

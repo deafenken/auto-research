@@ -29,12 +29,14 @@ paper.tex
 paper.pdf
 references.bib
 figures/
+figure_prompts/
+figure_plan.md
 tables/
 review.md
 revision_plan.md
 ```
 
-If compilation is unavailable, `paper.tex`, `references.bib`, and the generated figure/table assets are still mandatory.
+If compilation is unavailable, `paper.tex`, `references.bib`, the figure prompt assets, and the generated table assets are still mandatory.
 
 ## Workflow
 
@@ -79,6 +81,13 @@ Do not write the Related Work section until the argument structure is stable.
 
 Before filling prose, adapt the outline to the target venue's expectations: page limits, anonymization, checklist sections, and contribution style.
 
+Page budgeting is mandatory:
+
+- stay within the target venue's main-text page limit,
+- plan section lengths before full drafting,
+- give `Related Work` enough space to look well-read and grounded,
+- but do not bloat it so much that `Method` or `Results` become under-specified.
+
 ### Phase 3 — Render tables and figures from artifacts
 
 Use `references/table-style.md`.
@@ -87,8 +96,16 @@ Use `references/table-style.md`.
 - Ablation table must come from raw or aggregated rows in `results.csv`.
 - Failure cases and caveats come from `run_report.md`.
 - Prefer the fetched venue template under `stage0_setup/latex_template/`; only fall back to bundled assets if Stage 0 logged a missing official template.
+- For conceptual figures such as pipeline diagrams, method overviews, or idea schematics, do **not** try to fully render them in-agent if quality will be poor. Instead, leave a clean LaTeX figure placeholder and generate external-image-model prompts under `figure_prompts/`. These prompts should be suitable for tools such as Gemini or GPT-image. See `references/figure-prompt-handoff.md`.
 
 If the experiment failed its own pre-registered criteria, load `references/negative-result-paper.md` and frame the paper honestly as a negative or mixed-result contribution.
+
+For each non-trivial figure you expect the final paper to need, produce:
+
+- a stable filename target in `figures/`
+- a short figure role description in `figure_plan.md`
+- a dedicated prompt file in `figure_prompts/`
+- a LaTeX placeholder in `paper.tex` that points to the future filename and labels the figure as pending external generation
 
 ### Phase 4 — Self-review
 
@@ -97,6 +114,7 @@ Run the paper through `references/auto-reviewer.md`.
 - Score contribution, clarity, soundness, and significance.
 - Surface at least 2 substantive weaknesses.
 - Emit actionable revisions with file targets.
+- Check page-budget fit against the venue limit and trim or rebalance sections if needed.
 
 Write the review to `review.md` and the fix list to `revision_plan.md`.
 
@@ -114,6 +132,9 @@ Write the review to `review.md` and the fix list to `revision_plan.md`.
 4. **Limitations are mandatory.** Include at least one compute limitation and one external-validity limitation.
 5. **Review cannot be empty praise.** If the auto-reviewer finds fewer than 2 concrete weaknesses, rerun it with a stricter prompt.
 6. **Write to the target venue, not to a generic top-tier fantasy.** Section emphasis, page pressure, and claim style must match `stage0_setup/venue_profile.yaml`.
+7. **Figure handoff must be explicit.** If a figure is better produced externally (for example with Gemini or GPT-image), the paper must contain a placeholder and the repo must contain a reusable prompt file for the user.
+8. **Respect the venue page limit.** Main text must fit the target venue's page budget unless the venue explicitly excludes references or appendices from the limit.
+9. **Related Work must be rich, not token-thin.** By default aim for a citation-dense Related Work section that is roughly 1 to 1.5 pages when the venue page budget allows it; shorten only when the venue is unusually tight or when method/results would otherwise become under-specified.
 
 ## When to load which reference
 
@@ -121,6 +142,8 @@ Write the review to `review.md` and the fix list to `revision_plan.md`.
 |---|---|
 | `references/outline-then-fill.md` | Building the first outline |
 | `references/table-style.md` | Rendering result tables |
+| `references/figure-prompt-handoff.md` | Planning figure placeholders and external-image-model-ready prompts |
+| `references/page-budgeting.md` | Allocating page space and sizing Related Work under venue limits |
 | `references/auto-reviewer.md` | Self-review and revision |
 | `references/negative-result-paper.md` | Results are weak, mixed, or negative |
 | `../auto-research/references/venue-targeting.md` | Stage 0 assets are missing or need fallback logic |
