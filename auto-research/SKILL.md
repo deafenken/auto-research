@@ -1,6 +1,15 @@
 ---
 name: auto-research
-description: Orchestrate a fully-autonomous CS/AI research pipeline from a broad topic to a venue-targeted paper draft. Start by asking the user which conference or journal they want to target, fetch the official LaTeX template and call-for-papers requirements from official sources, analyze what kinds of contributions that venue rewards, then run the closed loop: literature mining, hypothesis design, code execution, and LaTeX paper drafting. Delegates each stage to a specialized sub-skill (auto-research-ideation, auto-research-method, auto-research-execution, auto-research-writing) and enforces state hand-off, hallucination guards, and human-in-the-loop checkpoints.
+description: >-
+  Orchestrate a fully-autonomous CS/AI research pipeline from a broad topic to a
+  venue-targeted paper draft. Start by asking the user which conference or journal
+  they want to target, fetch the official LaTeX template and call-for-papers
+  requirements from official sources, analyze what kinds of contributions that
+  venue rewards, then run the closed loop: literature mining, hypothesis design,
+  code execution, and LaTeX paper drafting. Delegates each stage to a specialized
+  sub-skill (auto-research-ideation, auto-research-method, auto-research-execution,
+  auto-research-writing) and enforces state hand-off, hallucination guards, and
+  human-in-the-loop checkpoints.
 ---
 
 # Auto-Research Orchestrator (CS/AI)
