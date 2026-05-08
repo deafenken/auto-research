@@ -45,14 +45,39 @@ Each skill contains:
 
 ## Quick Start
 
-1. Copy one or more skill folders into your Claude or Codex skills directory.
+1. Copy one or more skill folders into your Claude or Codex skills directory (see [Installation](#installation) below for paths).
 2. Invoke `auto-research` for end-to-end runs, or invoke a stage skill directly for partial continuation.
 3. Use `auto-research-writing` only after Stage 3 artifacts exist.
+
+## Installation
+
+### Claude Code
+
+Claude Code discovers skills under `~/.claude/skills/` (user scope) or `<project>/.claude/skills/` (project scope). Copy or symlink the five folders there:
+
+```bash
+# User scope — available in every project
+mkdir -p ~/.claude/skills
+cp -r auto-research auto-research-ideation auto-research-method \
+      auto-research-execution auto-research-writing ~/.claude/skills/
+
+# Or project scope — available only inside the current repo
+mkdir -p .claude/skills
+cp -r auto-research auto-research-ideation auto-research-method \
+      auto-research-execution auto-research-writing .claude/skills/
+```
+
+After copying, restart Claude Code (or run `/skills` to verify they show up). The trigger phrases inside each `SKILL.md` (e.g. "write me a paper on X", "auto research X") will surface the skill automatically; you can also invoke a specific stage by name.
+
+### Codex / OpenAI-compatible agents
+
+Place the same folders in whatever skills directory your Codex-style runtime uses; the `agents/openai.yaml` files supply the UI metadata.
 
 ## Compatibility
 
 - `SKILL.md`, `references/`, and `assets/` are the portable core and can be used by both Claude-style and Codex-style skill systems.
-- `agents/openai.yaml` is included for Codex/OpenAI-compatible UI metadata and does not block Claude usage.
+- `SKILL.md` frontmatter (`name` + `description`) is exactly the format Claude Code expects — no conversion needed, and all descriptions stay within Claude Code's 1024-character limit.
+- `agents/openai.yaml` is Codex/OpenAI-compatible UI metadata only; Claude Code ignores it without error.
 - The workflow itself is model-agnostic: the main assumptions are staged file hand-offs, tool access, and human checkpoints.
 
 ## Notes

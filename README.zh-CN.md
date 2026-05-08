@@ -45,14 +45,39 @@ README.zh-CN.md
 
 ## 快速开始
 
-1. 将一个或多个 skill 文件夹复制到你的 Claude 或 Codex skills 目录中。
+1. 将一个或多个 skill 文件夹复制到你的 Claude 或 Codex skills 目录中（具体路径见下方 [安装](#安装)）。
 2. 需要跑完整流程时调用 `auto-research`，只想从某一阶段继续时直接调用对应的 stage skill。
 3. 只有在 Stage 3 的实验产物已经存在时，才使用 `auto-research-writing`。
+
+## 安装
+
+### Claude Code
+
+Claude Code 会自动从 `~/.claude/skills/`（用户级，全局可用）或 `<project>/.claude/skills/`（项目级，仅当前仓库可用）发现 skill。把这五个目录复制或软链过去即可：
+
+```bash
+# 用户级：在所有项目中可用
+mkdir -p ~/.claude/skills
+cp -r auto-research auto-research-ideation auto-research-method \
+      auto-research-execution auto-research-writing ~/.claude/skills/
+
+# 或项目级：仅在当前仓库内可用
+mkdir -p .claude/skills
+cp -r auto-research auto-research-ideation auto-research-method \
+      auto-research-execution auto-research-writing .claude/skills/
+```
+
+复制完成后重启 Claude Code（或运行 `/skills` 确认列表里已出现这五个 skill）。各 `SKILL.md` 中声明的触发短语（例如「write me a paper on X」「auto research X」「做一篇关于 X 的论文」）会自动触发对应 skill，你也可以按名字直接调用某个阶段。
+
+### Codex / OpenAI 兼容 agent
+
+把同样的目录放入你的 Codex 风格 runtime 所使用的 skills 目录即可，`agents/openai.yaml` 提供对应的 UI 元数据。
 
 ## 兼容性
 
 - 真正可移植的核心是 `SKILL.md`、`references/` 和 `assets/`，Claude 风格和 Codex 风格的 skill 系统都可以使用。
-- `agents/openai.yaml` 只是为了 Codex / OpenAI 兼容界面提供元数据，不会妨碍在 Claude 中使用。
+- `SKILL.md` 的 frontmatter（`name` + `description`）就是 Claude Code 期望的格式，无需任何转换，所有 description 也都在 Claude Code 1024 字符上限内。
+- `agents/openai.yaml` 只是为了 Codex / OpenAI 兼容界面提供元数据，Claude Code 会直接忽略，不会报错。
 - 这套工作流本身不绑定具体模型，核心依赖是：分阶段文件交接、工具可用性，以及必要的人类审批节点。
 
 ## 说明
