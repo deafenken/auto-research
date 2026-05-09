@@ -1,0 +1,5 @@
+run_id,config_name,seed,git_commit,gpu_hours,primary_metric,calibration_ece,notes
+clean,ours_method,13,abc1234,1.4,0.736,0.053,
+clean,ours_method,42,abc1234,1.4,0.732,0.055,
+clean,baseline_chinchilla,13,abc1234,1.2,0.683,0.086,
+clean,baseline_chinchilla,42,abc1234,1.2,0.679,0.088,

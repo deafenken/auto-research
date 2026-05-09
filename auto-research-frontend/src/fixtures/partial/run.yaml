@@ -1,0 +1,5 @@
+run_id: 2026-05-09-fixture-partial
+domain: "test-time compute scaling for small LMs"
+budget:
+  gpu_hours: 40
+mode: interactive

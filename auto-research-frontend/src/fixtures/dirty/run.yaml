@@ -1,0 +1,11 @@
+run_id: 2026-05-09-fixture-dirty
+domain: "test-time compute scaling for small LMs"
+target_venue:
+  name: "ICLR 2027"
+  track: "Main Conference"
+budget:
+  gpu_hours: 40
+  hardware: "1xH100-80GB"
+deadline: 2026-05-20
+mode: interactive
+gpu_hours_consumed_so_far: 38.7

@@ -1,0 +1,2 @@
+{"schema_version": 2, "claim_id": "C-1", "value": 73.4, "unit": "%", "metric": "accuracy", "config_name": "ours_method", "seed": null, "paper_tex_locator": "paper.tex:L7", "source": "results_summary.json:ours_method.accuracy.mean"}
+{"schema_version": 2, "claim_id": "C-2", "value": 0.054, "unit": "", "metric": "calibration_ece", "config_name": "ours_method", "seed": null, "paper_tex_locator": "paper.tex:L17", "source": "results_summary.json:ours_method.calibration_ece.mean"}

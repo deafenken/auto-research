@@ -1,0 +1,3 @@
+run_id,config_name,seed,git_commit,gpu_hours,primary_metric,calibration_ece,notes
+dirty,ours_method,13,bbb1111,1.4,0.736,0.053,
+dirty,ours_method,42,bbb1111,1.4,0.732,0.055,

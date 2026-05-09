@@ -1,0 +1,19 @@
+% Synthetic paper for clean_run lint fixture.
+\documentclass{article}
+\begin{document}
+\section{Introduction}
+We follow the test-time compute scaling protocol of \cite{snell2024scaling} and
+extend it with our reweighting trick. Section~3.2 explains the algorithm.
+We achieve \textbf{73.4\%} accuracy on the held-out test set, beating the
+\textbf{0.681} reported by \cite{ours_method_baseline} on the same configuration.
+
+\section{Related work}
+Earlier work on chain-of-thought prompting~\cite{wei2022chain} reported
+28.4 BLEU on summarisation, and has been extended in many directions.
+Our analysis builds on \cite{snell2024scaling}, who study compute--accuracy
+trade-offs.
+
+\section{Conclusion}
+On the calibration metric, we observe \textbf{0.054} expected calibration error,
+better than the \textbf{0.087} of the strongest baseline.
+\end{document}

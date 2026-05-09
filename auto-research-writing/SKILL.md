@@ -146,6 +146,21 @@ Write the review to `review.md` and the fix list to `revision_plan.md`.
 - If a second pass still has any axis `< 5/10`, escalate to the user with the review and the weakest sections.
 - If the review says claims overreach results, revise claims or route back to Stage 2/3 through the orchestrator.
 
+After the lint gate is green and the auto-reviewer accepts, build the
+Inspector dashboard so the human reviewer can sign off visually:
+
+```
+python assets/scripts/build_dashboard.py --run-dir runs/<id>
+```
+
+This stages a static SPA at `runs/<id>/_dashboard/` with symlinks back to
+`paper.tex`, `lint_report.md`, `claims_ledger.jsonl`, and the Stage-3
+artifacts. Serving with `python -m http.server` in that directory shows
+every numeric claim and citation underlined according to the lint
+report — green / orange / red matches Rule 10's verdicts. Skip this on
+hosts without Node by running it on the dev machine and rsync'ing
+`_dashboard/` over.
+
 ## Hard rules for this stage
 
 1. **Numbers trace to artifacts.** Every numeric claim must resolve to Stage 3 outputs or a verified cited paper.
