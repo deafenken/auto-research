@@ -1,0 +1,4 @@
+{"schema_version": 2, "claim_id": "C-1", "value": 73.4, "unit": "%", "metric": "accuracy", "config_name": "ours_method", "seed": null, "paper_tex_locator": "paper.tex:L7:C12", "source": "results_summary.json:ours_method.accuracy.mean"}
+{"schema_version": 2, "claim_id": "C-2", "value": 0.054, "unit": "", "metric": "calibration_ece", "config_name": "ours_method", "seed": null, "paper_tex_locator": "paper.tex:L17", "source": "results_summary.json:ours_method.calibration_ece.mean"}
+{"schema_version": 2, "claim_id": "C-3", "value": 0.681, "unit": "", "metric": "accuracy", "config_name": "baseline_chinchilla", "seed": 42, "paper_tex_locator": "paper.tex:L8:C9", "source": "results.csv:row=3"}
+{"schema_version": 2, "claim_id": "C-4", "value": 28.4, "unit": "BLEU", "metric": "bleu", "config_name": null, "seed": null, "paper_tex_locator": "paper.tex:L12", "source": "literature_pool:wei2022chain:abstract"}

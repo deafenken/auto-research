@@ -28,8 +28,13 @@ By the end of this skill you must have produced, in `runs/<run_id>/stage1_ideati
 candidates.json        # 3 ideas with full metadata (schema in auto-research/references/state-contract.md)
 chosen.json            # the picked one (interactive: human picks; autonomous: top score wins)
 literature_pool.json   # every paper verified during this stage — Stage 4 may only cite from this pool
+persona_notes/         # one JSON per persona (theorist, engineer, skeptic, industry_pm) — required by contract v2
 hand_off.md            # 1-paragraph summary for Stage 2
 ```
+
+`persona_notes/<role>.json` is now contract-required (v2): it powers the
+Inspector's idea-debate viewer and is the only structured trace of which
+persona surfaced which gap. See `auto-research/references/state-contract.md`.
 
 ## Workflow (5 phases)
 

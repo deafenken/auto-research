@@ -106,6 +106,7 @@ Each sub-skill reads a defined input file and writes a defined output file. This
 ```
 runs/<run_id>/
 ├── run.yaml              # domain, venue, budget, deadline, mode
+├── stage_<n>_done        # JSON marker per stage, contract v2 (see state-contract.md)
 ├── stage0_setup/
 │   ├── venue_profile.yaml
 │   ├── cfp.md
@@ -116,6 +117,7 @@ runs/<run_id>/
 ├── stage1_ideation/
 │   ├── candidates.json   # 3 ideas with scores
 │   ├── chosen.json       # the picked one
+│   ├── persona_notes/    # contract v2 — 4 persona JSONs
 │   └── hand_off.md
 ├── stage2_method/
 │   ├── method.md
@@ -124,7 +126,8 @@ runs/<run_id>/
 ├── stage3_execution/
 │   ├── code/             # the experiment repo
 │   ├── logs/
-│   ├── results.csv
+│   ├── results.csv       # contract v2 adds an `event_flags` column
+│   ├── results_summary.json
 │   ├── run_report.md
 │   └── hand_off.md
 └── stage4_writing/
@@ -132,6 +135,8 @@ runs/<run_id>/
     ├── paper.pdf
     ├── references.bib
     ├── figures/
+    ├── claims_ledger.jsonl  # contract v2 — drives Stage-4 linters + Inspector
+    ├── lint_report.md       # contract v2 — output of lint_writeup.py
     └── review.md
 ```
 

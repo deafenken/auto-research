@@ -79,6 +79,11 @@ stage1_ideation/
 ├── candidates.json       # all 3 brainstormed ideas with scores
 ├── chosen.json           # the one we proceed with
 ├── literature_pool.json  # the verified papers used during ideation
+├── persona_notes/        # one JSON per STORM-style persona (theorist, engineer, skeptic, pm)
+│   ├── theorist.json
+│   ├── engineer.json
+│   ├── skeptic.json
+│   └── industry_pm.json
 └── hand_off.md           # 1 paragraph: "what stage 2 needs to know"
 ```
 
@@ -178,8 +183,14 @@ stage3_execution/
 ### `results.csv` minimum columns
 
 ```
-run_id, config_name, seed, git_commit, gpu_hours, primary_metric, [secondary_metrics...], notes
+run_id, config_name, seed, git_commit, gpu_hours, primary_metric, [secondary_metrics...], event_flags, notes
 ```
+
+`event_flags` is a comma-separated subset of `oom`, `nan`, `restart`,
+`timeout`, `clean` (or empty). Populated by the training-monitor sentinel
+in `auto-research-execution/references/training-monitor.md`. Stage 4 +
+the dashboard surface these as red/orange badges; do not strip them when
+aggregating into `results_summary.json`.
 
 ### `run_report.md` required sections
 
@@ -204,8 +215,11 @@ stage4_writing/
 │   └── pipeline_overview.md
 ├── figure_plan.md
 ├── tables/
-│   └── main_results.tex
-└── review.md             # auto-reviewer output
+│   └── main_results.tex   # written by render_table.py from results_summary.json
+├── claims_ledger.jsonl    # per-claim provenance (see schema below)
+├── lint_report.md         # output of lint_writeup.py — Phase 4 hard gate
+├── revision_plan.md       # populated when auto-reviewer requests changes
+└── review.md              # auto-reviewer output
 ```
 
 ### `figure_plan.md` required sections
@@ -213,6 +227,45 @@ stage4_writing/
 - **Figure inventory**: each planned figure, target filename, section, and current status.
 - **External-generation prompts**: pointer to each `figure_prompts/*.md` file.
 - **Placeholder policy**: which figures are still placeholders in `paper.tex`.
+
+### `claims_ledger.jsonl` schema (per-line)
+
+```json
+{
+  "schema_version": 2,
+  "claim_id": "C-1",
+  "value": 73.4,
+  "unit": "%",
+  "metric": "accuracy",
+  "config_name": "ours_method",
+  "seed": null,
+  "paper_tex_locator": "paper.tex:L7:C12",
+  "source": "results_summary.json:ours_method.accuracy.mean"
+}
+```
+
+* `paper_tex_locator` is `<file_relative_path>:L<line>` or
+  `<file_relative_path>:L<line>:C<col>` — `trace_numbers.py` and the
+  frontend tokenizer share this exact convention; do not invent another.
+* `source` is a free-form pointer (`results.csv:row=17`,
+  `results_summary.json:<dotted-key>`, `literature_pool:<key>:abstract`,
+  ...) — `trace_numbers.py` does not parse it but it is shown in the
+  Inspector's right pane.
+* `seed` is `null` for cross-seed aggregates, or an integer for per-seed
+  numbers; `value` always reflects the displayed number (so a "73.4%"
+  table cell is `73.4`, not `0.734`).
+* `schema_version` MUST be `2`. Version 1 fixtures from earlier branches
+  are rejected by the linter and the dashboard.
+
+### `revision_plan.md` revision counter
+
+Every `revision_plan.md` produced by Phase 5 starts with the comment::
+
+    <!-- revision: N -->
+
+Where `N` is a 1-indexed integer (`1` on first revision, `2` on second).
+The Inspector's revision-diff view orders successive revisions by this
+counter rather than by file mtime.
 
 ### `review.md` required sections
 
@@ -259,3 +312,27 @@ The next stage's first action is to `Read` this file.
 - Re-running `auto-research` on an existing `runs/<run_id>/` resumes from the latest `stage_N_done` marker.
 - To force restart from a stage: delete that stage's directory.
 - To rerun only stage K: invoke `auto-research-<stage-k-name>` directly with `--run-id <run_id>`.
+
+## Stage markers (`stage_<n>_done`)
+
+A marker file is written at the top level of `runs/<run_id>/` when each
+stage finishes successfully. The orchestrator and the dashboard both rely
+on the same JSON shape; an empty file no longer satisfies the contract.
+
+```json
+{
+  "stage": 3,
+  "started_at": "2026-05-09T11:53:00Z",
+  "finished_at": "2026-05-09T13:42:00Z",
+  "gpu_hours_consumed_so_far": 12.4
+}
+```
+
+* `gpu_hours_consumed_so_far` is the **cumulative** sum from `run.yaml`
+  start, not a per-stage delta. Compute it by summing the `gpu_hours`
+  column of `stage3_execution/results.csv` (no other stage spends GPU
+  hours by definition).
+* `started_at` / `finished_at` are ISO-8601 UTC. Use `LINT_FREEZE_TIME`
+  to pin them in tests.
+* The orchestrator's `auto-research/SKILL.md` enumerates which stage may
+  write each marker; sub-skills must not write markers of other stages.

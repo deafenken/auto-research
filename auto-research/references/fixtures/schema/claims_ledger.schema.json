@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://auto-research/contract/claims_ledger.v2.json",
+  "title": "Claims ledger entry (v2)",
+  "description": "One JSON object per line in stage4_writing/claims_ledger.jsonl. Linked from state-contract.md. Validate with: `jsonschema -i <line> claims_ledger.schema.json`.",
+  "type": "object",
+  "required": ["schema_version", "claim_id", "value", "paper_tex_locator", "source"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 2,
+      "description": "Pinned to 2 — readers must hard-fail on other versions."
+    },
+    "claim_id": {
+      "type": "string",
+      "pattern": "^C-[0-9]+$",
+      "description": "Stable identifier; the Inspector uses this in URL fragments."
+    },
+    "value": {
+      "type": "number",
+      "description": "The displayed number — 73.4 for a `73.4%` cell, not 0.734."
+    },
+    "unit": {
+      "type": "string",
+      "description": "Unit suffix, possibly empty."
+    },
+    "metric": {
+      "type": "string",
+      "description": "Free-form metric name; matches columns in results.csv when applicable."
+    },
+    "config_name": {
+      "type": ["string", "null"],
+      "description": "The config the value belongs to, or null for cross-config aggregates."
+    },
+    "seed": {
+      "type": ["integer", "null"],
+      "description": "Seed when the value is per-seed; null for aggregates."
+    },
+    "paper_tex_locator": {
+      "type": "string",
+      "pattern": "^[^:]+:L[0-9]+(?::C[0-9]+)?$",
+      "description": "<file>:L<line> or <file>:L<line>:C<col>. Same convention used by trace_numbers.py and the frontend tokenizer."
+    },
+    "source": {
+      "type": "string",
+      "description": "Human-readable pointer to the evidence (results.csv:row=N, results_summary.json:<dotted>, literature_pool:<key>:abstract, ...)."
+    }
+  }
+}

@@ -35,7 +35,7 @@ code/                  # version-controlled experiment repo (init'd by this skil
 ├── requirements.txt
 └── README.md
 logs/                  # WandB or TensorBoard mirror + stdout/stderr per run
-results.csv            # one row per (config, seed)
+results.csv            # one row per (config, seed) — contract v2 adds an `event_flags` column
 results_summary.json   # mean ± std per metric per config
 checkpoints/           # may be gitignored if too large
 run_report.md          # what worked, what broke, deviations
@@ -43,6 +43,18 @@ hand_off.md            # 1-paragraph note for Stage 4
 ```
 
 The four critical files for Stage 4 are: `results.csv`, `results_summary.json`, `run_report.md`, `hand_off.md`.
+
+Contract v2 additions:
+
+* `results.csv` carries an `event_flags` column — comma-separated subset
+  of `oom`, `nan`, `restart`, `timeout`, `clean`. Populate it from
+  `training-monitor.md`'s `monitor_events.jsonl` aggregation; do not
+  drop these flags when summarising into `results_summary.json`.
+* When a stage finishes, write a JSON marker
+  `runs/<id>/stage_3_done` with
+  `{stage, started_at, finished_at, gpu_hours_consumed_so_far}`
+  (cumulative, not delta). The orchestrator and the Inspector both rely
+  on this; an empty marker file no longer satisfies the contract.
 
 ## Workflow (6 phases)
 

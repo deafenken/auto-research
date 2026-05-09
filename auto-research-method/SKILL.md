@@ -37,6 +37,11 @@ hand_off.md            # 1-paragraph note for Stage 3
 
 The `method.md` and `experiment_plan.yaml` are the contracts Stage 3 reads. Anything not specified here will be a Stage-3 ad-lib (bad).
 
+Contract v2 expectation: every metric named in `experiment_plan.yaml` should
+include a `direction: max|min` field — `auto-research-writing/assets/scripts/render_table.py`
+uses this to bold the right row, and `trace_numbers.py` will not silently
+flip sign when matching `0.054` ECE against a "lower is better" target.
+
 ## Workflow (5 phases)
 
 ### Phase 1 — Read the idea, load the constraints
