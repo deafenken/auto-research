@@ -75,9 +75,13 @@ def main() -> int:
     dist = frontend / "dist"
 
     if not args.skip_build:
+        lock_path = frontend / "pnpm-lock.yaml"
         if not (frontend / "node_modules").is_dir():
-            subprocess.run(["npm", "ci"], cwd=frontend, check=True)
-        subprocess.run(["npm", "run", "build"], cwd=frontend, check=True)
+            install_cmd = ["pnpm", "install"]
+            if lock_path.is_file():
+                install_cmd.append("--frozen-lockfile")
+            subprocess.run(install_cmd, cwd=frontend, check=True)
+        subprocess.run(["pnpm", "build"], cwd=frontend, check=True)
 
     if not dist.is_dir():
         sys.exit(f"[build_dashboard] expected {dist} after build; nothing to copy")

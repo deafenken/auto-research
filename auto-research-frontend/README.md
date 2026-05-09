@@ -15,15 +15,29 @@ talks to a backend.
 
 ## Build
 
+This project uses **pnpm** (declared via `package.json::packageManager`).
+Install pnpm once if you don't have it:
+
+```bash
+npm install -g pnpm
+# or, with corepack (bundled with Node 16+):
+corepack enable && corepack prepare pnpm@latest --activate
+```
+
+Then:
+
 ```bash
 cd auto-research-frontend
-npm ci          # install pinned deps once
-npm run build   # → dist/  (static, no Node runtime needed at serve time)
+pnpm install     # first run creates pnpm-lock.yaml; subsequent runs are reproducible
+pnpm build       # → dist/  (static, no Node runtime needed at serve time)
 ```
+
+After the lock file is generated, commit it so CI / teammates get
+reproducible installs (`pnpm install --frozen-lockfile`).
 
 Vite is configured with `base: './'`, so `dist/` works from any path.
 
-> The auto-research VPS does not have Node/npm and isn't supposed to.
+> The auto-research VPS does not run pnpm install (1.9 GB RAM, shared).
 > Build the bundle on a developer machine and `rsync` it over.
 
 ## Stage into a run
@@ -40,7 +54,7 @@ cd runs/2026-05-09-my-paper/_dashboard && python -m http.server 8000
 ## Develop offline (no real run)
 
 ```bash
-npm run dev
+pnpm dev
 # open http://localhost:5173/?fixture=dirty
 ```
 
