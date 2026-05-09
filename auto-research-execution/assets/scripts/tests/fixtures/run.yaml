@@ -1,0 +1,6 @@
+run_id: fixture
+domain: "synthetic"
+budget:
+  gpu_hours: 3.0
+  hardware: "1xA100-40GB"
+mode: interactive

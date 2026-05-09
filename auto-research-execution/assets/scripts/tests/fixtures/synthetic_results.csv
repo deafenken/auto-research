@@ -1,0 +1,5 @@
+run_id,config_name,seed,git_commit,gpu_hours,primary_metric,calibration_ece,event_flags,notes
+fixture,baseline_chinchilla,13,abc1234,0.6,0.683,0.086,clean,
+fixture,baseline_chinchilla,42,abc1234,0.6,0.679,0.088,clean,
+fixture,ours_method,13,abc1234,0.7,0.736,0.053,clean,
+fixture,ours_method,42,abc1234,0.7,0.732,0.055,oom,recovered after OOM, halved batch
