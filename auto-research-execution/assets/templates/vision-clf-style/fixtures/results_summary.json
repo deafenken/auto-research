@@ -1,0 +1,26 @@
+{
+  "resnet50_baseline": {
+    "accuracy": 0.873,
+    "class_names": ["airplane", "automobile", "bird", "cat", "deer"],
+    "per_class_f1": {"airplane": 0.91, "automobile": 0.93, "bird": 0.79, "cat": 0.74, "deer": 0.86},
+    "confusion_matrix": [
+      [910, 12, 35, 24, 19],
+      [9, 932, 14, 23, 22],
+      [29, 11, 794, 102, 64],
+      [18, 16, 89, 740, 137],
+      [11, 12, 41, 78, 858]
+    ]
+  },
+  "resnet50_proposed": {
+    "accuracy": 0.901,
+    "class_names": ["airplane", "automobile", "bird", "cat", "deer"],
+    "per_class_f1": {"airplane": 0.93, "automobile": 0.95, "bird": 0.84, "cat": 0.80, "deer": 0.89},
+    "confusion_matrix": [
+      [930, 8, 28, 19, 15],
+      [6, 949, 9, 17, 19],
+      [22, 8, 838, 81, 51],
+      [12, 11, 71, 808, 98],
+      [8, 9, 31, 56, 896]
+    ]
+  }
+}

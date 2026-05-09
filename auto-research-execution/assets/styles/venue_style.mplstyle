@@ -1,0 +1,36 @@
+# venue_style.mplstyle — NeurIPS / ICLR / ICML camera-ready defaults.
+# Single-column default figsize; flip width to 7.0 for double-column.
+# Rationale: serif body fonts, no gridlines, no top/right spines (Tufte minimal).
+
+font.family       : serif
+font.serif        : Times New Roman, Times, DejaVu Serif
+font.size         : 8
+mathtext.fontset  : stix
+
+figure.figsize    : 3.5, 2.5
+figure.dpi        : 150
+savefig.dpi       : 300
+savefig.bbox      : tight
+savefig.pad_inches: 0.02
+
+axes.linewidth    : 0.8
+axes.labelsize    : 8
+axes.titlesize    : 9
+axes.spines.top   : False
+axes.spines.right : False
+axes.grid         : False
+
+xtick.labelsize   : 7
+ytick.labelsize   : 7
+xtick.direction   : in
+ytick.direction   : in
+
+lines.linewidth   : 1.2
+lines.markersize  : 4
+patch.linewidth   : 0.5
+
+legend.fontsize   : 7
+legend.frameon    : False
+legend.loc        : best
+
+axes.prop_cycle   : cycler('color', ['1f77b4', 'ff7f0e', '2ca02c', 'd62728', '9467bd', '8c564b', 'e377c2', '7f7f7f'])

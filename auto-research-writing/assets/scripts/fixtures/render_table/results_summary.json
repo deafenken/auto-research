@@ -1,0 +1,17 @@
+{
+  "baseline_chinchilla": {
+    "accuracy": {"mean": 0.621, "std": 0.013},
+    "calibration_ece": {"mean": 0.087, "std": 0.005},
+    "wall_clock_inference_s": {"mean": 1.42, "std": 0.06}
+  },
+  "ours_method": {
+    "accuracy": {"mean": 0.684, "std": 0.011},
+    "calibration_ece": {"mean": 0.054, "std": 0.004},
+    "wall_clock_inference_s": {"mean": 1.51, "std": 0.07}
+  },
+  "ablation_no_a": {
+    "accuracy": {"mean": 0.652, "std": 0.012},
+    "calibration_ece": {"mean": 0.071, "std": 0.005},
+    "wall_clock_inference_s": {"mean": 1.49, "std": 0.06}
+  }
+}

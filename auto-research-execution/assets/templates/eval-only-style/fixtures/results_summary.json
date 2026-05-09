@@ -1,0 +1,26 @@
+{
+  "zero_shot": {
+    "accuracy": {
+      "mmlu":   {"mean": 0.612, "std": 0.014},
+      "arc_c":  {"mean": 0.498, "std": 0.018},
+      "gsm8k":  {"mean": 0.241, "std": 0.022},
+      "humaneval": {"mean": 0.187, "std": 0.025}
+    }
+  },
+  "few_shot_k5": {
+    "accuracy": {
+      "mmlu":   {"mean": 0.658, "std": 0.012},
+      "arc_c":  {"mean": 0.547, "std": 0.016},
+      "gsm8k":  {"mean": 0.368, "std": 0.020},
+      "humaneval": {"mean": 0.234, "std": 0.024}
+    }
+  },
+  "ours_proposed": {
+    "accuracy": {
+      "mmlu":   {"mean": 0.681, "std": 0.011},
+      "arc_c":  {"mean": 0.572, "std": 0.015},
+      "gsm8k":  {"mean": 0.412, "std": 0.019},
+      "humaneval": {"mean": 0.281, "std": 0.022}
+    }
+  }
+}

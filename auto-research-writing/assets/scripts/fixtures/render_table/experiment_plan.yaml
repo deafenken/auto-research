@@ -1,0 +1,9 @@
+hypothesis: "Method M improves accuracy on D by >= 5pp over baseline B."
+metrics:
+  primary: accuracy
+  accuracy:
+    direction: max
+  calibration_ece:
+    direction: min
+  wall_clock_inference_s:
+    direction: min
