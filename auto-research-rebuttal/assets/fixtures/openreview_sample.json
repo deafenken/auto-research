@@ -1,0 +1,29 @@
+{
+  "forum_id": "fixture-iclr-2027",
+  "notes": [
+    {
+      "signatures": ["Reviewer Q7vG"],
+      "content": {
+        "review": "The proposed reweighting trick is interesting but the ablation removing component A is missing. I would also like to see OOD evaluation; without that I cannot tell whether the reported 73.4% accuracy is robust. Minor: Figure 2 caption has a typo.",
+        "rating": "5",
+        "confidence": "4"
+      }
+    },
+    {
+      "signatures": ["Reviewer mK4h"],
+      "content": {
+        "review": "Strong empirical results but the related work is incremental. The paper feels very similar to Snell et al. 2024 — what is the new contribution beyond reweighting? Also, no significance test on 5 seeds.",
+        "rating": "4",
+        "confidence": "5"
+      }
+    },
+    {
+      "signatures": ["Reviewer aZ9c"],
+      "content": {
+        "review": "Clarity issues throughout Section 3: notation is ambiguous and the algorithm block is hard to follow. Consider rephrasing the loss derivation. Minor typo in Table 2 caption.",
+        "rating": "6",
+        "confidence": "3"
+      }
+    }
+  ]
+}

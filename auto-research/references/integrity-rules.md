@@ -130,18 +130,60 @@ Any other class — silent NaN loss, model architecture mismatch, unexpected met
 
 **Failure mode this prevents.** The common autonomous-agent trap where "real innovation is hard, so the system quietly degenerates into a benchmark or evaluation paper."
 
+## Rule 9 — No silent paper edits during rebuttal
+
+**Statement.** During Stage 5 (rebuttal), every change to
+`stage4_writing/paper.tex` must be reflected in
+`stage5_rebuttal/revision_diff.md`, with each diff block tagged by an
+HTML comment of the form `<!-- atom_id: R<n>.A<i> -->` linking it back
+to the reviewer atom that motivated the edit.
+
+**What is forbidden.** Editing `paper.tex` between submission and
+rebuttal without a public diff. This is the most common way a draft
+silently mutates between reviewers' first read and the AC's final read,
+and it erodes trust both in the response and in the artifact itself.
+
+**Check.** At the end of Stage 5 the orchestrator computes
+`diff stage4_writing/paper.tex@(start of stage 5)
+stage4_writing/paper.tex@(end of stage 5)`. If the diff is non-empty
+AND `revision_diff.md` is empty (or its diff blocks omit the
+`atom_id` HTML comment), BLOCK Stage 5 completion.
+
+**Failure mode this prevents.** "Phantom" edits in rebuttal threads —
+where a reviewer reads version A, the AC reads version B, and the
+delta was never disclosed.
+
+## Rule 10 — Stage-4 integrity linters are blocking
+
+**Statement.** `auto-research-writing/assets/scripts/check_citations.py`
+and `trace_numbers.py` (orchestrated by `lint_writeup.py`) must both
+exit 0 before Stage 4 produces a final paper. Editing these scripts to
+silence findings is itself a Rule-10 violation. The `--warn-only` flag
+exists for in-progress drafts only and must NOT be used for the version
+returned to the user.
+
+**Check.** Stage 4 cannot mark `stage_4_done` while
+`stage4_writing/lint_report.md` reports `exit_code != 0`.
+
+**Failure mode this prevents.** "Integrity rules in prose only" — Rules
+1 and 2 are non-trivial to enforce by hand on a finished paper, and the
+linters operationalise them. Without Rule 10 the linters become
+optional and the prose rules become decorative.
+
 ## Enforcement summary table
 
 | Rule | Stage where checked | Mode |
 |---|---|---|
-| 1. Numbers trace | 4 (pre-compile) | Block |
-| 2. Citations real | 1, 4 | Block |
+| 1. Numbers trace | 4 (pre-compile, via trace_numbers.py) | Block |
+| 2. Citations real | 1, 4 (via check_citations.py) | Block |
 | 3. No baseline downgrade | 3→4 | Block |
 | 4. Reproducibility floor | 3→4 | Block |
 | 5. Compute budget | continuous in 3 | Warn @ 50%, ask @ 80%, hard stop @ 100% |
 | 6. Hypothesis locked | 3, 4 | Block |
 | 7. Auto-fix boundary | 3 | Escalate after 5 |
 | 8. No evaluation-paper drift | 1→2, 2→3 | Block |
+| 9. No silent paper edits in rebuttal | end of 5 | Block |
+| 10. Stage-4 linters blocking | 4 (pre-`stage_4_done`) | Block |
 
 ## When a rule is violated
 

@@ -1,0 +1,10 @@
+# auto-research-rebuttal dependencies. Install on the dev machine
+# (NOT the small VPS). All are optional for the offline test path —
+# `ingest_openreview.py` and `anchor_evidence.py` use only stdlib by
+# default. The OpenReview client is needed only when fetching forums
+# directly from openreview.net.
+#
+#     pip install -r requirements.txt
+#
+openreview-py>=1.30
+requests>=2.31

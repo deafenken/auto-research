@@ -1,0 +1,21 @@
+interface:
+  display_name: "Research Rebuttal"
+  short_description: "Decompose reviews, anchor every response to existing artifacts, draft a defensible rebuttal."
+  triggers:
+    - "draft a rebuttal"
+    - "respond to reviewers"
+    - "对审稿人意见写 rebuttal"
+  inputs:
+    - name: openreview_json
+      label: "OpenReview JSON"
+      description: "Forum-export JSON file. Optional if reviewer comments are pasted directly."
+      required: false
+    - name: reviews_markdown
+      label: "Reviewer comments (markdown)"
+      description: "Pasted text — split heuristically into atomic comments."
+      required: false
+  outputs:
+    - "stage5_rebuttal/rebuttal.md"
+    - "stage5_rebuttal/revision_diff.md"
+    - "stage5_rebuttal/evidence_map.json"
+    - "stage5_rebuttal/self_review.md"

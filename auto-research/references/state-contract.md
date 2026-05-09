@@ -285,6 +285,32 @@ Required revisions before resubmit:
 - [ ] specific actionable item with file:line reference
 ```
 
+## Stage 5 — `stage5_rebuttal/` (optional)
+
+Populated only when reviewer comments arrive after Stage 4. See
+`auto-research-rebuttal/SKILL.md`.
+
+```
+stage5_rebuttal/
+├── inbox/                 # raw review files dropped by the user (json/md)
+├── reviews_ingested.json  # normalised atoms with severity × axis tags
+├── evidence_map.json      # atom_id → list of evidence pointers + recommended stance
+├── rebuttal.md            # the response, per-reviewer sections
+├── revision_diff.md       # paper.tex patches implied by every CONCEDE stance (Rule 9)
+├── self_review.md         # internal critique before sending
+└── hand_off.md            # 1-paragraph note for the orchestrator
+```
+
+`rebuttal.md` paragraphs are tagged with one of four stances —
+`REBUT-WITH-EVIDENCE`, `CONCEDE-AND-PATCH`, `OUT-OF-SCOPE`,
+`NEW-EXPERIMENT-NEEDED` — drawn from
+`auto-research-rebuttal/references/reviewer-axis-taxonomy.md`. Every
+CONCEDE stance must produce both a `paper.tex` change and a matching
+`revision_diff.md` block whose `<!-- atom_id: R<n>.A<i> -->` comment
+links it back to the source atom. The orchestrator diffs `paper.tex`
+pre/post Stage 5; a non-empty diff with empty `revision_diff.md` is a
+Rule-9 block.
+
 ## Hand-off notes (`hand_off.md`)
 
 Each stage writes one of these for the next stage. Strict format:

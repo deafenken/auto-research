@@ -31,7 +31,7 @@ Trigger when the user says any of:
 
 Do **not** trigger for: literature-only summaries, single-stage requests (e.g. "polish this abstract"), or non-CS domains. Route those to the relevant single skill instead.
 
-## The four stages
+## The four stages (plus optional Stage 5)
 
 | # | Stage | Sub-skill | Primary artifact |
 |---|---|---|---|
@@ -39,6 +39,7 @@ Do **not** trigger for: literature-only summaries, single-stage requests (e.g. "
 | 2 | Method & design | `auto-research-method` | `method.md` + `experiment_plan.yaml` |
 | 3 | Execution | `auto-research-execution` | `results/` (logs, csv, ckpts) + `run_report.md` |
 | 4 | Writing | `auto-research-writing` | `paper.tex` + `paper.pdf` + `review.md` |
+| 5 | Rebuttal *(optional)* | `auto-research-rebuttal` | `rebuttal.md` + `revision_diff.md` |
 
 The full state lives under a single working directory: `runs/<run_id>/` (see `references/state-contract.md` for the exact file schema).
 
@@ -63,9 +64,20 @@ The full state lives under a single working directory: `runs/<run_id>/` (see `re
 4. Writing     : invoke auto-research-writing on results
                  → draft directly into the fetched venue template when available
                  → produces paper.tex + paper.pdf
+                 → Stage-4 integrity linters (Rule 10) MUST exit 0 first
                  → invokes the auto-reviewer sub-routine inside Skill 4
                  → if review score < 5/10 on any of 4 axes, loop back to Stage 4 with revision plan
                  → if review flags "results contradict claims", loop back to Stage 2
+5. Rebuttal    : invoke auto-research-rebuttal IFF reviews are present in
+                 runs/<id>/stage5_rebuttal/inbox/ (or the user pastes them in)
+                 → ingest_openreview.py + anchor_evidence.py produce reviews_ingested.json
+                   and evidence_map.json
+                 → drafts rebuttal.md whose stance per atom is one of
+                   REBUT-WITH-EVIDENCE / CONCEDE-AND-PATCH / OUT-OF-SCOPE /
+                   NEW-EXPERIMENT-NEEDED
+                 → every CONCEDE patches paper.tex AND records a diff block in
+                   revision_diff.md (Rule 9)
+                 → CHECKPOINT: human reviews tone before sending
 ```
 
 Each transition writes a `stage_<n>_done` marker and a one-paragraph hand-off note that the next stage reads first.
