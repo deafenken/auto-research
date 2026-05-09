@@ -109,7 +109,29 @@ For each non-trivial figure you expect the final paper to need, produce:
 
 ### Phase 4 — Self-review
 
-Run the paper through `references/auto-reviewer.md`.
+Before scoring, run the integrity linters (Rule 10 — non-negotiable). They
+turn integrity Rules 1–2 from prose into a hard gate:
+
+```
+python assets/scripts/lint_writeup.py \
+    --paper runs/<id>/stage4_writing/paper.tex \
+    --run-dir runs/<id> \
+    --judge hybrid          # or 'mock' for offline / test runs
+```
+
+`lint_writeup.py` runs `check_citations.py` (Layer-4 relevance: SUPPORTS /
+MENTIONS / IRRELEVANT) and `trace_numbers.py` (every numeric literal must
+trace to `claims_ledger.jsonl`, `results_summary.json`, `results.csv`, or
+the abstract of a paper cited within 30 chars before the number). Both
+write into a single `lint_report.md` next to `paper.tex`.
+
+If exit code != 0, do not advance: read `lint_report.md`, fix each
+violation by patching `paper.tex` (or, when justified, by adding the
+missing claim to `claims_ledger.jsonl` so that linter sees the proof),
+and rerun. Editing the linters themselves to silence violations is a
+violation of Rule 10.
+
+Once both linters exit 0, run the paper through `references/auto-reviewer.md`:
 
 - Score contribution, clarity, soundness, and significance.
 - Surface at least 2 substantive weaknesses.
@@ -135,6 +157,7 @@ Write the review to `review.md` and the fix list to `revision_plan.md`.
 7. **Figure handoff must be explicit.** If a figure is better produced externally (for example with Gemini or GPT-image), the paper must contain a placeholder and the repo must contain a reusable prompt file for the user.
 8. **Respect the venue page limit.** Main text must fit the target venue's page budget unless the venue explicitly excludes references or appendices from the limit.
 9. **Related Work must be rich, not token-thin.** By default aim for a citation-dense Related Work section that is roughly 1 to 1.5 pages when the venue page budget allows it; shorten only when the venue is unusually tight or when method/results would otherwise become under-specified.
+10. **Integrity linters are blocking, not advisory.** `assets/scripts/check_citations.py` and `assets/scripts/trace_numbers.py` (run together via `lint_writeup.py`) must both exit 0 before Phase 4 finishes. Editing the linters or relaxing thresholds to silence findings is itself a Rule-10 violation. Use `--warn-only` only for an in-progress draft, never for the version handed back to the user.
 
 ## When to load which reference
 
@@ -146,6 +169,9 @@ Write the review to `review.md` and the fix list to `revision_plan.md`.
 | `references/page-budgeting.md` | Allocating page space and sizing Related Work under venue limits |
 | `references/auto-reviewer.md` | Self-review and revision |
 | `references/negative-result-paper.md` | Results are weak, mixed, or negative |
+| `assets/scripts/check_citations.py` | Phase 4 pre-review — Rule 2 / Rule 10 enforcement |
+| `assets/scripts/trace_numbers.py` | Phase 4 pre-review — Rule 1 / Rule 10 enforcement |
+| `assets/scripts/render_table.py` | Phase 3 — programmatic booktabs table from `results_summary.json` |
 | `../auto-research/references/venue-targeting.md` | Stage 0 assets are missing or need fallback logic |
 
 ## Assets

@@ -1,0 +1,10 @@
+{
+  "ours_method": {
+    "accuracy":        {"mean": 0.734, "std": 0.011},
+    "calibration_ece": {"mean": 0.054, "std": 0.004}
+  },
+  "baseline_chinchilla": {
+    "accuracy":        {"mean": 0.681, "std": 0.013},
+    "calibration_ece": {"mean": 0.087, "std": 0.005}
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "snell2024scaling":     {"label": "SUPPORTS",  "confidence": 0.92, "reason": "abstract describes the same protocol"},
+  "wei2022chain":         {"label": "SUPPORTS",  "confidence": 0.81, "reason": "abstract reports the cited 28.4 BLEU number"},
+  "ours_method_baseline": {"label": "SUPPORTS",  "confidence": 0.88, "reason": "abstract reports 0.681 baseline"},
+  "default":              {"label": "MENTIONS",  "confidence": 0.55, "reason": "background mention"}
+}

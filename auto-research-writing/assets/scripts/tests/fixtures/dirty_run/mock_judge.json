@@ -1,0 +1,5 @@
+{
+  "snell2024scaling": {"label": "SUPPORTS",   "confidence": 0.91, "reason": "abstract directly describes the cited protocol"},
+  "kingma2014adam":   {"label": "IRRELEVANT", "confidence": 0.84, "reason": "context discusses reweighting; Adam abstract covers a different topic"},
+  "default":          {"label": "MENTIONS",   "confidence": 0.55, "reason": "background mention"}
+}

@@ -1,0 +1,22 @@
+[
+  {
+    "cite_key": "snell2024scaling",
+    "s2_paper_id": "fakeS2_snell2024",
+    "arxiv_id": "2408.03314",
+    "title": "Scaling Test-Time Compute Optimally Can Be More Effective than Scaling Model Parameters",
+    "abstract": "We study how to allocate inference-time compute. Letting small LMs iterate at test time can match much larger LMs at fixed compute, validating the test-time compute scaling protocol."
+  },
+  {
+    "cite_key": "wei2022chain",
+    "s2_paper_id": "fakeS2_wei2022",
+    "arxiv_id": "2201.11903",
+    "title": "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models",
+    "abstract": "We show chain-of-thought prompting yields strong improvements across reasoning benchmarks. On a summarisation suite the same technique reports 28.4 BLEU."
+  },
+  {
+    "cite_key": "ours_method_baseline",
+    "s2_paper_id": "fakeS2_baseline2025",
+    "title": "A Strong Baseline for Test-Time Compute on Small LMs",
+    "abstract": "Provides a competitive reweighting baseline scoring 0.681 accuracy under matched compute."
+  }
+]

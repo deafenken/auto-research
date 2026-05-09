@@ -1,0 +1,15 @@
+# Stage-4 linter & rendering dependencies. Install on the user's machine
+# (NOT on the small VPS that hosts the agent — see CLAUDE.md):
+#
+#     pip install -r requirements.txt
+#
+# Mandatory:
+PyYAML>=6.0
+pandas>=2.0
+requests>=2.31
+
+# Optional — install only if you want richer linter judges. The scripts
+# fall back to mock / none judges when these are missing.
+#   transformers>=4.40    # for --judge scicite
+#   torch>=2.1            # transitive dep of transformers
+#   anthropic>=0.40       # for --judge llm  (or hybrid escalation)
