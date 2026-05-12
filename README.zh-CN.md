@@ -7,8 +7,7 @@
 *对 Claude Code 或 Codex 说一句:* **`帮我做一篇关于 X 的 NeurIPS 论文`**
 *→ 5 阶段流水线 → reviewer 风格自审 → 你署名负责。*
 
-<!-- 想加手绘 hero 图,把生成结果丢到 docs/hero.png 即可;
-     图缺失也不影响 README,下面的 mermaid 流程图就是默认 hero。 -->
+<img src="docs/hero.png" alt="auto-research hero" width="480"/>
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB.svg?logo=python&logoColor=white)](#)
@@ -227,7 +226,7 @@ auto-research-ideation/
 auto-research-method/
 auto-research-execution/
 auto-research-writing/
-docs/                # hero 图 + 重新生成 hero 图的 prompt
+docs/                # hero 图（装饰性）
 README.md  README.zh-CN.md
 ```
 

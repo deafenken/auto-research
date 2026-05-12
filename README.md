@@ -7,8 +7,7 @@
 *Just tell Claude Code or Codex:* **`write me a NeurIPS paper on X`**
 *→ 5-stage pipeline → reviewer-style self-review → you sign your name.*
 
-<!-- Drop a hand-drawn hero into docs/hero.png if you want one;
-     the README does not break without it. -->
+<img src="docs/hero.png" alt="auto-research hero" width="480"/>
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB.svg?logo=python&logoColor=white)](#)
@@ -229,7 +228,7 @@ auto-research-ideation/
 auto-research-method/
 auto-research-execution/
 auto-research-writing/
-docs/                # hero image + prompt for regenerating it
+docs/                # hero image (cosmetic)
 README.md  README.zh-CN.md
 ```
 
