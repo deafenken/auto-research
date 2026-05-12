@@ -1,27 +1,195 @@
 # Auto Research Skills
 
-`auto-research` 是一套同时面向 Claude 和 Codex agent 的分阶段 CS/AI 科研 skill 集合。它会先询问你想投哪个会议或期刊，再从官方来源抓取对应的 LaTeX 模板和投稿要求，结合 CFP 分析创新角度，然后再推进从研究主题收敛到论文草稿产出的完整链路，并通过明确的阶段契约与完整性约束，防止伪造引用、无证据结论和偷偷降级 baseline 这类问题。
+`auto-research` 是一套面向 Claude Code 和 Codex agent 的「从研究主题 → 论文草稿」的分阶段 CS/AI 科研 skill 集合。
 
-## 包含的 Skill
+整体思路是把一篇 AI 顶会论文的写作过程拆成 5 个阶段，每个阶段由一个独立的 skill 负责，阶段之间通过 `runs/<run_id>/` 目录下的文件交接，从而避免「中途崩了得从头来」「论文里出现伪造引用」「baseline 被偷偷换弱」这一类常见翻车。
 
-- `auto-research`：全流程总控
-- `auto-research-ideation`：文献挖掘与研究点生成
-- `auto-research-method`：方法形式化与实验设计
-- `auto-research-execution`：实验实现、监控与复现执行
-- `auto-research-writing`：论文写作、自审与修订
+---
+
+## 一句话理解
+
+> 你告诉它「想投 NeurIPS 一篇关于 X 的论文」，它会先把目标会议的模板和投稿要求抓下来，再依次完成：选 idea → 形式化方法 → 跑实验 → 写 LaTeX 草稿，并在关键节点要你过目。
+
+它**不是**自动投稿系统，也**不是**自动「水论文」工具，最终 PDF 仍需要你自己审稿、署名、负责。
+
+---
+
+## 小白须知（第一次用之前请先看这里）
+
+如果你完全没用过 agent 类工具，建议先按下面顺序完成基础准备，否则直接调用会到处报错。
+
+### 这个 skill 适合谁
+
+- 已经知道自己想做的「研究方向」或「研究问题」，想要一个能帮你跑 baseline、整理结果、写 LaTeX 初稿的协作者。
+- 投稿目标是 NeurIPS / ICLR / ICML / CVPR / ACL / EMNLP 等 CS/AI 顶会，或同等级别的期刊。
+- 愿意全程「人在环里」（human-in-the-loop）：在 idea、方法、跑实验、改稿这些节点都自己拍板。
+
+### 这个 skill **不适合**谁
+
+- 完全没有研究方向，期望它「自己想出能毕业的课题」——它会给候选 idea，但研究品味仍需要你。
+- 想做的是纯文献综述、纯 benchmark 评测、纯工程报告——本流程默认走的是「真正的研究创新」路线。
+- 期望它能帮你绕过查重、伪造数据、自动投稿——这些事情本流程**故意**做不到。
+
+### 第一次使用前需要完成的基础准备
+
+1. **装好 Claude Code 或 Codex CLI**，并能在终端里正常聊一句话。如果连 `claude` / `codex` 命令都没跑通，先不要碰这个 skill。
+2. **配好 API key 和账单**：跑完整流程的 token 消耗不算少，建议先确认账户里有可用额度。
+3. **准备一个干净的工作目录**（例如 `~/research/`），后续 `runs/<run_id>/` 会全部建在里面。不要在 Desktop 这种到处是文件的目录里跑。
+4. **本地能编译 LaTeX**：装好 TeX Live 或 MacTeX，至少能跑通 `pdflatex hello.tex` 再说。Stage 4 需要它来生成 PDF。
+5. **准备 Python 环境和（如果有）GPU**：Stage 3 真的会跑训练/评测代码。没有 GPU 也能跑，但要在一开始就把 compute budget 设得很小，否则它会一直挂着烧 token。
+6. **大致了解几个名词**：
+   - **CFP**（Call for Papers）：会议的征稿启事，规定页数、格式、评审重点。本流程会自动抓。
+   - **baseline**：你方法要对比的已有方法。少了它，论文一定被拒。
+   - **ablation**：消融实验，证明「你提出的每个组件都不是凑数的」。
+   - **run\_id**：一次完整跑流的标识，本流程用它来组织所有中间产物。
+
+   不熟悉也没关系，每个阶段的 `references/` 里都会再展开讲，但起码看到这些词不会一脸懵。
+7. **先读一遍 [设计原则](#设计原则)**，特别是 `Evidence first` 和 `Human accountability` 两条，这两条决定了你不能指望它「自己编一个看起来很厉害的结果」。
+
+### 推荐的第一次使用姿势
+
+- **不要一上来就跑全流程**。建议第一次只跑 `auto-research-ideation`，看看它产出的 3 个候选 idea 和打分，感受一下交互节奏。
+- 觉得 ok 之后，再用一个**小目标**跑端到端（例如：一个小数据集 + 一个能在一两小时内跑完的方法），先把整套 file hand-off 跑顺。
+- 真正投会议的工作再考虑放大 compute budget。
+
+---
+
+## 五个 Skill 各自负责什么
+
+| Skill | 角色 | 输入 | 主要产物 |
+|---|---|---|---|
+| `auto-research` | 总控（不做研究，只调度） | 你给的方向 + 目标会议 + 预算 + ddl | 建好 `runs/<run_id>/`，依次调用下面四个 skill，把住每次阶段交接 |
+| `auto-research-ideation` | 文献挖掘 + idea 生成 | 研究方向 + 目标会议的 CFP | 3 个带打分和真实引用的候选 idea，挑出 1 个 |
+| `auto-research-method` | 方法形式化 + 实验设计 | 选中的 idea | `method.md`（含公式和伪代码）+ `experiment_plan.yaml`（数据集、baseline、metric、ablation、种子） |
+| `auto-research-execution` | 实际跑实验 | 实验计划 | 训练/评测代码、`results.csv`、`results_summary.json`、`run_report.md` |
+| `auto-research-writing` | 写 LaTeX 论文 | 上面所有产物 | `paper.tex` / `paper.pdf` / `references.bib` / `figures/`、reviewer 风格自审 `review.md` |
+
+`auto-research` 自己**不写代码、不查文献、不写论文**。它只负责按顺序调度这 4 个专项 skill，并在每次交接时做完整性检查（没有伪造引用、没有偷偷把 baseline 调弱、没有「没源数据的表格」）。
+
+---
+
+## 流程图
+
+```
+        ┌──────────────────────────────────────────────────────────┐
+        │             auto-research（总控 / orchestrator）         │
+        └──────────────────────────────────────────────────────────┘
+                                  │
+   Stage 0  ────────────────►  问目标会议，抓 CFP 和官方 LaTeX 模板
+                                  │
+   Stage 1  ────────────────►  auto-research-ideation
+                                  │   候选 idea ×3 → 选 1
+   Stage 2  ────────────────►  auto-research-method
+                                  │   method.md + experiment_plan.yaml
+   Stage 3  ────────────────►  auto-research-execution
+                                  │   results.csv + run_report.md
+   Stage 4  ────────────────►  auto-research-writing
+                                  │   paper.tex + paper.pdf + review.md
+                                  ▼
+                              人类审稿 / 决定是否投
+```
+
+每个阶段都会写入 `runs/<run_id>/stageN_*/hand_off.md`，下一个阶段以它为唯一可信输入。这意味着：你完全可以**只跑某一阶段**，或者**从中间某一步重启**，前提是上一阶段的 `hand_off.md` 已经存在。
+
+---
+
+## 中间产物长这样
+
+```
+runs/<run_id>/
+├── run.yaml                        # 方向、会议、预算、ddl、模式
+├── stage0_setup/                   # 目标会议的 LaTeX 模板 + CFP
+├── stage1_ideation/
+│   ├── candidates.json             # 3 个候选 idea + 打分
+│   └── chosen.json                 # 选中的那一个
+├── stage2_method/
+│   ├── method.md                   # 公式 + 伪代码
+│   └── experiment_plan.yaml        # 数据集 / baseline / metric / ablation / seeds
+├── stage3_execution/
+│   ├── code/                       # 真正的实验仓库
+│   ├── logs/
+│   ├── results.csv
+│   └── run_report.md
+└── stage4_writing/
+    ├── paper.tex
+    ├── paper.pdf
+    ├── references.bib
+    ├── figures/
+    └── review.md                   # reviewer 风格自审
+```
+
+---
 
 ## 设计原则
 
-- `Evidence first`：所有 claim 和表格都必须能追溯到实验产物或已验证引用。
-- `Stage contracts`：每个阶段都通过 `runs/<run_id>/` 下的文件进行读写交接。
-- `Venue-first setup`：在 ideation 之前先确定目标会议或期刊，再用 CFP 和官方模板约束创新点与论文包装。
-- `Output-first writing`：写作从结果、限制和可审查性出发，而不是先堆措辞。
-- `Reviewer realism`：整套流程按顶会 reviewer 会怎么挑问题来设计。
-- `Budget honesty`：算力预算、baseline 和失败标准都必须在执行前锁定。
-- `Human accountability`：生成的论文只是草稿，提交前必须由人审阅和负责。
-- `No evaluation-paper drift`：除非用户明确要求，否则流程不会默认退化成纯 benchmark / 纯评测论文。
-- `External figure handoff`：当流程图或 idea 图更适合外部模型生成时，写作阶段会保留 LaTeX 占位符，并把可直接给 Gemini、GPT-image 等外部图像模型的提示词保存下来。
-- `Venue-aware writing budget`：写作阶段会严格服从目标会议页数限制，并在空间允许时默认给 `Related Work` 预留约 1 到 1.5 页、尽量做到引用丰富。
+- **Evidence first**：论文里的每一个数、每一张表都必须能追到 `runs/<run_id>/results/` 里的源行，写作阶段会拒绝渲染没有源数据的表格单元。
+- **Stage contracts**：每个阶段只通过文件交接，禁止「在脑子里记着上一步的结论」。
+- **Venue-first setup**：ideation 之前先确定目标会议，把 CFP 和官方模板作为创新角度的约束。
+- **Output-first writing**：从结果、limitation、可审查性出发，再考虑措辞。
+- **Reviewer realism**：按顶会 reviewer 会怎么挑刺来组织实验和写作。
+- **Budget honesty**：算力预算、baseline、失败标准在执行前就锁定。
+- **Human accountability**：生成的论文是草稿，提交前必须由你审阅并署名负责。
+- **No evaluation-paper drift**：默认不会退化成纯 benchmark / 纯评测论文，除非你明确说要写那种。
+- **External figure handoff**：流程图、idea 概念图这类更适合外部模型画的图，写作阶段会留 LaTeX 占位符 + 一份可以丢给 Gemini / GPT-image 的提示词。
+- **Venue-aware writing budget**：严格服从会议页数限制，空间允许时默认给 Related Work 留约 1 – 1.5 页，并尽量做到引用丰富。
+
+---
+
+## 安装
+
+### Claude Code
+
+Claude Code 自动从这两个地方发现 skill：
+
+- `~/.claude/skills/`（用户级，所有项目都能用）
+- `<project>/.claude/skills/`（项目级，仅当前仓库）
+
+把这 5 个目录复制（或软链）过去即可：
+
+```bash
+# 用户级
+mkdir -p ~/.claude/skills
+cp -r auto-research auto-research-ideation auto-research-method \
+      auto-research-execution auto-research-writing ~/.claude/skills/
+
+# 或项目级
+mkdir -p .claude/skills
+cp -r auto-research auto-research-ideation auto-research-method \
+      auto-research-execution auto-research-writing .claude/skills/
+```
+
+复制完后重启 Claude Code（或运行 `/skills` 确认这 5 个名字都在列表里）。之后任意一句触发短语都能拉起对应 skill：
+
+- 「做一篇关于 X 的论文」
+- 「write me a paper on X」
+- 「auto research X」
+- 「想投 NeurIPS / ICLR / ICML / CVPR / ACL 的 X」
+
+你也可以按名字直接跳到某个阶段，例如「跑 auto-research-writing，input 在 `runs/2026-05-12-xxx/`」。
+
+### Codex / OpenAI 兼容 agent
+
+把同样这 5 个目录放进你的 Codex skills 目录即可，`agents/openai.yaml` 提供 UI 元数据。
+
+---
+
+## 快速开始（端到端示例）
+
+```text
+你：想投 NeurIPS 2026，方向是 small language model 的 test-time compute，
+    GPU 是 4×A100，ddl 还有 3 个月。先跑全流程，每阶段交接前都要我确认。
+
+agent：
+  → Stage 0：抓 NeurIPS 2026 CFP + LaTeX 模板，写入 runs/2026-05-12-ttc-slm/stage0_setup/
+  → Stage 1：mining 文献，给出 3 个候选 idea 和打分 → 等你选
+  → Stage 2：把选中的 idea 写成 method.md + experiment_plan.yaml → 等你确认
+  → Stage 3：按 plan 跑实验，输出 results.csv + run_report.md
+  → Stage 4：写 paper.tex，编译 paper.pdf，附 reviewer 风格自审 review.md
+```
+
+只想从某一阶段继续：直接调用对应的 stage skill，并把上一步的 `hand_off.md` 指给它。
+
+---
 
 ## 仓库结构
 
@@ -36,55 +204,29 @@ README.en.md
 README.zh-CN.md
 ```
 
-每个 skill 目录包含：
+每个 skill 目录内：
 
-- `SKILL.md`：触发条件和工作流说明
-- `references/`：按需加载的参考材料
-- `assets/`：模板、脚本或 LaTeX 资源
-- `agents/openai.yaml`：面向 Codex / OpenAI 兼容界面的元数据；在 Claude 侧可以忽略
+- `SKILL.md`：触发条件 + 工作流
+- `references/`：按需加载的参考材料（CFP 解析、state contract、完整性规则等）
+- `assets/`：模板、脚本、LaTeX 资源
+- `agents/openai.yaml`：Codex 端的 UI 元数据，Claude 侧会忽略，不报错
 
-## 快速开始
-
-1. 将一个或多个 skill 文件夹复制到你的 Claude 或 Codex skills 目录中（具体路径见下方 [安装](#安装)）。
-2. 需要跑完整流程时调用 `auto-research`，只想从某一阶段继续时直接调用对应的 stage skill。
-3. 只有在 Stage 3 的实验产物已经存在时，才使用 `auto-research-writing`。
-
-## 安装
-
-### Claude Code
-
-Claude Code 会自动从 `~/.claude/skills/`（用户级，全局可用）或 `<project>/.claude/skills/`（项目级，仅当前仓库可用）发现 skill。把这五个目录复制或软链过去即可：
-
-```bash
-# 用户级：在所有项目中可用
-mkdir -p ~/.claude/skills
-cp -r auto-research auto-research-ideation auto-research-method \
-      auto-research-execution auto-research-writing ~/.claude/skills/
-
-# 或项目级：仅在当前仓库内可用
-mkdir -p .claude/skills
-cp -r auto-research auto-research-ideation auto-research-method \
-      auto-research-execution auto-research-writing .claude/skills/
-```
-
-复制完成后重启 Claude Code（或运行 `/skills` 确认列表里已出现这五个 skill）。各 `SKILL.md` 中声明的触发短语（例如「write me a paper on X」「auto research X」「做一篇关于 X 的论文」）会自动触发对应 skill，你也可以按名字直接调用某个阶段。
-
-### Codex / OpenAI 兼容 agent
-
-把同样的目录放入你的 Codex 风格 runtime 所使用的 skills 目录即可，`agents/openai.yaml` 提供对应的 UI 元数据。
+---
 
 ## 兼容性
 
-- 真正可移植的核心是 `SKILL.md`、`references/` 和 `assets/`，Claude 风格和 Codex 风格的 skill 系统都可以使用。
-- `SKILL.md` 的 frontmatter（`name` + `description`）就是 Claude Code 期望的格式，无需任何转换，所有 description 也都在 Claude Code 1024 字符上限内。
-- `agents/openai.yaml` 只是为了 Codex / OpenAI 兼容界面提供元数据，Claude Code 会直接忽略，不会报错。
-- 这套工作流本身不绑定具体模型，核心依赖是：分阶段文件交接、工具可用性，以及必要的人类审批节点。
+- 真正可移植的核心是 `SKILL.md` + `references/` + `assets/`，Claude 风格和 Codex 风格的 skill 系统都能跑。
+- `SKILL.md` frontmatter 用的是 Claude Code 原生格式（`name` + `description`），所有 description 都在 1024 字符以内。
+- `agents/openai.yaml` 只是 Codex / OpenAI 兼容 UI 用的元数据，Claude Code 会直接忽略。
+- 整个工作流不绑定具体模型，核心假设只有 3 条：阶段化的文件交接、必要工具的可用性、人工审批节点。
 
-## 说明
+---
 
-- 这个仓库针对的是 CS/AI 科研工作流，不是通用学术写作工具。
-- 写作阶段支持把失败结果诚实地组织成 negative-result framing，而不是“洗论文”。
-- `auto-research-writing` 默认提供通用 NeurIPS 风格 LaTeX 模板，同时附带 ICLR 和 ICML 版本。
-- 这套东西是科研辅助基础设施，不是自动投稿系统。
-- 默认目标是真正的研究创新 idea，而不是“测很多模型、跑很多榜单”的评测论文。
-- 对于流程图、方法图、idea 图，写作阶段支持保留占位符并输出给 Gemini、GPT-image 之类外部作图模型使用的提示词文件。
+## 注意事项
+
+- 这是 CS/AI 科研工作流，不是通用学术写作工具，社科 / 人文 / 临床方向不建议直接套。
+- 失败结果支持以 negative-result 的方式诚实地组织成论文，**不会**自动「洗」成正向结论。
+- `auto-research-writing` 默认提供 NeurIPS 风格 LaTeX 模板，并附带 ICLR 和 ICML 变体。
+- 默认目标是真正的研究创新 idea，而不是「测很多模型、跑很多榜单」的评测论文。
+- 流程图、方法图、idea 概念图等更适合外部模型作图的位置，写作阶段会留 LaTeX 占位符并保存对应提示词文件。
+- 这套东西是科研辅助基础设施，**不是自动投稿系统**，最终提交永远由人决定。
