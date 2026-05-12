@@ -30,6 +30,20 @@ If you have never used an agent-style tool before, work through this checklist f
 - You want a pure literature survey, a pure benchmark paper, or an engineering report — this pipeline defaults to a real research contribution.
 - You expect it to bypass plagiarism checks, fabricate data, or auto-submit — this pipeline is **deliberately** built not to do those things.
 
+### If you just joined a research group (the most important step — do this before anything else)
+
+No amount of tooling makes up for missing research taste. Before you touch this skill, do the following:
+
+1. **Sit down with your advisor and lock the direction.** Pin down: which sub-area you'll work in this year (or this semester), the concrete problem you're trying to solve, and what counts as an acceptable outcome (top-tier first-author paper? workshop? technical report?). Do not invent a direction yourself just because a skill name sounds cool.
+2. **Ask your advisor or senior labmates for 2–3 recent SOTA papers** in that direction (NeurIPS / ICLR / ICML / CVPR / ACL tier, ideally from the last 1–2 years). Read them front to back. The goal is **not** to memorize the numbers — it is to learn:
+   - what role each of **abstract / introduction / method / experiments / related work** plays, and how they are laid out;
+   - which **baselines** were chosen and why;
+   - what each **ablation** is actually proving;
+   - what the paper's "selling point" is, why this venue accepted it, and what a reviewer probably attacked.
+3. Once you can answer in 3–5 sentences: "what are the 3 strongest methods in this area solving, what are each one's weaknesses, and is there a gap none of them covers well?" — *then* start using this skill. If you can't, keep reading.
+
+This step matters more than any software / environment prep below. Skip it, and you won't be able to judge the candidate ideas the pipeline produces, you won't be able to defend them in front of your advisor, and you'll waste compute (and goodwill) running the wrong one.
+
 ### Things to set up before you start
 
 1. **Install Claude Code or the Codex CLI**, and confirm you can hold a normal conversation in the terminal. If `claude` / `codex` does not even launch cleanly, fix that before touching this skill.
