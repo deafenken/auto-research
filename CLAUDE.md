@@ -51,7 +51,7 @@ Key files the next stage always reads first:
 
 - Keep `SKILL.md` frontmatter `description` field within Claude Code's 1024-character limit and written so the trigger logic ("when to invoke" / "do NOT trigger when") is unambiguous.
 - Examples in skills use absolute dates (e.g. `2026-05-06-...`); do not rewrite to relative phrases like "today".
-- The repo intentionally has both English (`README.en.md`) and Chinese (`README.zh-CN.md`) READMEs; if you change one substantively, mirror the change in the other.
+- The repo intentionally has both English (`README.md` — GitHub's default render) and Chinese (`README.zh-CN.md`) READMEs; if you change one substantively, mirror the change in the other.
 - Bundled LaTeX templates (`auto-research-writing/assets/latex/{neurips,iclr,icml}/template.tex`) are *fallbacks*. The pipeline prefers the template fetched into `runs/<run_id>/stage0_setup/latex_template/` at Stage 0. Do not change the writing skill in a way that bypasses the fetched template.
 
 ## Working in this environment

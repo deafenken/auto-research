@@ -1,8 +1,48 @@
-# Auto Research Skills
+<div align="center">
+
+# 📝 auto-research
+
+### 扔个主题,出篇论文。<br/>证据为先 · Reviewer 视角 · 你最后过目。
+
+*对 Claude Code 或 Codex 说一句:* **`帮我做一篇关于 X 的 NeurIPS 论文`**
+*→ 5 阶段流水线 → reviewer 风格自审 → 你署名负责。*
+
+<!-- 想加手绘 hero 图,把生成结果丢到 docs/hero.png 即可,
+     docs/hero-prompt.md 里有可直接喂给 GPT-image-1 / Midjourney / Gemini 的 prompt。
+     图缺失也不影响 README,下面的 mermaid 流程图就是默认 hero。 -->
+
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB.svg?logo=python&logoColor=white)](#)
+[![LaTeX](https://img.shields.io/badge/LaTeX-TeXLive-008080.svg?logo=latex&logoColor=white)](#)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-Compatible-D97757.svg)](https://claude.ai/code)
+[![Codex](https://img.shields.io/badge/Codex-Compatible-10A37F.svg?logo=openai&logoColor=white)](#)
+[![Skills](https://img.shields.io/badge/Skills-5-8A2BE2.svg)](auto-research/SKILL.md)
+[![Venues](https://img.shields.io/badge/Venue%20targets-NeurIPS%20%C2%B7%20ICLR%20%C2%B7%20ICML%20%C2%B7%20CVPR%20%C2%B7%20ACL-FF6B35.svg)](#)
+
+</div>
+
+```mermaid
+flowchart LR
+    U(["👤 你"]) -->|"<b>帮我做一篇关于 X 的论文</b><br/>+ 目标会议、预算、ddl"| O{{"🎯 总控<br/>契约 + 完整性闸"}}
+    O --> S0["📋 Stage 0<br/>会议设置<br/><i>抓 CFP +<br/>官方 LaTeX 模板</i>"]
+    S0 --> S1["💡 Stage 1<br/>Ideation<br/><i>3 个打分候选<br/>STORM 风格</i>"]
+    S1 --> S2["📐 Stage 2<br/>Method<br/><i>公式 + 伪代码<br/>+ 实验计划</i>"]
+    S2 --> S3["🧪 Stage 3<br/>Execution<br/><i>训练 + 记录<br/>results.csv + report</i>"]
+    S3 --> S4["📄 Stage 4<br/>Writing<br/><i>paper.tex + paper.pdf<br/>+ reviewer 自审</i>"]
+    S4 -->|"hand_off.md"| H(["👤 你署名 + 投稿"])
+    classDef hot fill:#FFEDD5,stroke:#EA580C,color:#7C2D12,stroke-width:2px;
+    classDef cold fill:#DBEAFE,stroke:#2563EB,color:#1E3A8A,stroke-width:2px;
+    class O,S0,S1,S2,S3,S4 hot
+    class U,H cold
+```
+
+<div align="center"><sub><i>每个阶段通过 <code>runs/&lt;run_id&gt;/stageN_*/hand_off.md</code> 交接。可以只跑某一阶段,也可以从中间任意阶段重启。</i></sub></div>
+
+---
 
 `auto-research` 是一套面向 Claude Code 和 Codex agent 的「从研究主题 → 论文草稿」的分阶段 CS/AI 科研 skill 集合。
 
-整体思路是把一篇 AI 顶会论文的写作过程拆成 5 个阶段，每个阶段由一个独立的 skill 负责，阶段之间通过 `runs/<run_id>/` 目录下的文件交接，从而避免「中途崩了得从头来」「论文里出现伪造引用」「baseline 被偷偷换弱」这一类常见翻车。
+整体思路是把一篇 AI 顶会论文的写作过程拆成 5 个阶段,每个阶段由一个独立的 skill 负责,阶段之间通过 `runs/<run_id>/` 目录下的文件交接,从而避免「中途崩了得从头来」「论文里出现伪造引用」「baseline 被偷偷换弱」这一类常见翻车。
 
 ---
 
@@ -79,31 +119,6 @@
 | `auto-research-writing` | 写 LaTeX 论文 | 上面所有产物 | `paper.tex` / `paper.pdf` / `references.bib` / `figures/`、reviewer 风格自审 `review.md` |
 
 `auto-research` 自己**不写代码、不查文献、不写论文**。它只负责按顺序调度这 4 个专项 skill，并在每次交接时做完整性检查（没有伪造引用、没有偷偷把 baseline 调弱、没有「没源数据的表格」）。
-
----
-
-## 流程图
-
-```
-        ┌──────────────────────────────────────────────────────────┐
-        │             auto-research（总控 / orchestrator）         │
-        └──────────────────────────────────────────────────────────┘
-                                  │
-   Stage 0  ────────────────►  问目标会议，抓 CFP 和官方 LaTeX 模板
-                                  │
-   Stage 1  ────────────────►  auto-research-ideation
-                                  │   候选 idea ×3 → 选 1
-   Stage 2  ────────────────►  auto-research-method
-                                  │   method.md + experiment_plan.yaml
-   Stage 3  ────────────────►  auto-research-execution
-                                  │   results.csv + run_report.md
-   Stage 4  ────────────────►  auto-research-writing
-                                  │   paper.tex + paper.pdf + review.md
-                                  ▼
-                              人类审稿 / 决定是否投
-```
-
-每个阶段都会写入 `runs/<run_id>/stageN_*/hand_off.md`，下一个阶段以它为唯一可信输入。这意味着：你完全可以**只跑某一阶段**，或者**从中间某一步重启**，前提是上一阶段的 `hand_off.md` 已经存在。
 
 ---
 
@@ -213,9 +228,8 @@ auto-research-ideation/
 auto-research-method/
 auto-research-execution/
 auto-research-writing/
-README.md
-README.en.md
-README.zh-CN.md
+docs/                # hero 图 + 重新生成 hero 图的 prompt
+README.md  README.zh-CN.md
 ```
 
 每个 skill 目录内：
