@@ -7,9 +7,8 @@
 *Just tell Claude Code or Codex:* **`write me a NeurIPS paper on X`**
 *→ 5-stage pipeline → reviewer-style self-review → you sign your name.*
 
-<!-- Drop a hand-drawn hero into docs/hero.png if you want one. See
-     docs/hero-prompt.md for a verbatim prompt for GPT-image-1 / Midjourney /
-     Gemini. The README does not break without it. -->
+<!-- Drop a hand-drawn hero into docs/hero.png if you want one;
+     the README does not break without it. -->
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB.svg?logo=python&logoColor=white)](#)

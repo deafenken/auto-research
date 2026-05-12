@@ -7,8 +7,7 @@
 *对 Claude Code 或 Codex 说一句:* **`帮我做一篇关于 X 的 NeurIPS 论文`**
 *→ 5 阶段流水线 → reviewer 风格自审 → 你署名负责。*
 
-<!-- 想加手绘 hero 图,把生成结果丢到 docs/hero.png 即可,
-     docs/hero-prompt.md 里有可直接喂给 GPT-image-1 / Midjourney / Gemini 的 prompt。
+<!-- 想加手绘 hero 图,把生成结果丢到 docs/hero.png 即可;
      图缺失也不影响 README,下面的 mermaid 流程图就是默认 hero。 -->
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
